@@ -1,6 +1,7 @@
 package com.taekyeong.tkgram.controller;
 
 import com.taekyeong.tkgram.dto.UserJoinRequestDto;
+import com.taekyeong.tkgram.dto.UserLoginRequestDto;
 import com.taekyeong.tkgram.entity.User;
 import com.taekyeong.tkgram.repository.UserRepository;
 import org.junit.After;
@@ -61,9 +62,9 @@ public class UserControllerTest {
     public void tearDown() throws Exception {
         userRepository.deleteAll();
     }
-
+/*
     @Test
-    public void 회원가입() throws Exception {
+    public HttpStatus 회원가입() throws Exception {
         String email = "xorud1541@test.com";
         String username = "jeon";
         String password = "123";
@@ -78,10 +79,46 @@ public class UserControllerTest {
         //when
         ResponseEntity<Long> responseEntity = restTemplate.postForEntity(url, userJoinRequestDto, Long.class);
 
+        return responseEntity.getStatusCode();
         //then
-        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(responseEntity.getBody()).isGreaterThan(0L);
+        //assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+        //assertThat(responseEntity.getBody()).isGreaterThan(0L);
 
         // List<User> all = userRepository.findAll();
+    }
+ */
+
+    @Test
+    public void 로그인() throws Exception {
+        String email = "xorud1541@test.com";
+        String password = "123";
+        String username = "jeon";
+
+        UserJoinRequestDto userJoinRequestDto = UserJoinRequestDto.builder()
+                .email(email)
+                .username(username)
+                .password(password)
+                .build();
+
+        String url = "http://localhost:" + port + "/api/v1/join";
+
+        //when
+        ResponseEntity<Long> joinResponseEntity = restTemplate.postForEntity(url, userJoinRequestDto, Long.class);
+        if(joinResponseEntity.getStatusCode() == HttpStatus.OK) {
+
+            url = "http://localhost:" + port + "/api/v1/login";
+            UserLoginRequestDto userLoginRequestDto = UserLoginRequestDto.builder()
+                    .email(email)
+                    .password(password)
+                    .secretkey("111")
+                    .build();
+
+            ResponseEntity<String> loginResponseEntity = restTemplate.postForEntity(url, userLoginRequestDto, String.class);
+
+            assertThat(loginResponseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+            String token = loginResponseEntity.getBody();
+            System.out.println(token);
+        }
     }
 }

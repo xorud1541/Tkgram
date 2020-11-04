@@ -21,7 +21,10 @@ public class JwtTokenProvider {
         this.validityInMilliseconds = validityInMilliseconds;
     }
 
-    public String createToken(String subject) {
+    public String createToken(String subject, String secretKey) {
+        if(!secretKey.equals(this.secretKey))
+            return null;
+
         Claims claims = Jwts.claims().setSubject(subject);
 
         Date now = new Date();

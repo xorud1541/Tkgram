@@ -1,6 +1,8 @@
 package com.taekyeong.tkgram.controller;
 
+import com.taekyeong.tkgram.dto.UserLoginRequestDto;
 import com.taekyeong.tkgram.service.UserJoinService;
+import com.taekyeong.tkgram.service.UserLoginService;
 import com.taekyeong.tkgram.util.JwtTokenProvider;
 import com.taekyeong.tkgram.dto.UserJoinRequestDto;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +16,7 @@ public class UserController {
     private JwtTokenProvider jwtTokenProvider;
 */
     private final UserJoinService userJoinService;
+    private final UserLoginService userLoginService;
 
     @GetMapping("/hello")
     public String hello() {
@@ -24,24 +27,9 @@ public class UserController {
     public Long joinNewUser(@RequestBody UserJoinRequestDto userJoinRequestDto) {
         return userJoinService.saveUser(userJoinRequestDto);
     }
-/*
-    @PostMapping(value = "/login", consumes = "application/json")
-    public @ResponseStatus Integer login(@RequestBody UserDto userDto) {
 
-        if(userDto.getEmail().isEmpty())
-            return 400;
-
-        if(userDto.getPassword().isEmpty())
-            return 400;
-
-        if(userRepository.findByEmail(userDto.getEmail()).size() == 1) {
-            String token = jwtTokenProvider.createToken(userDto.getEmail());
-            System.out.println(jwtTokenProvider.getSubject(token));
-            return 200;
-        }
-        else {
-            return 413;
-        }
+    @PostMapping("/api/v1/login")
+    public String login(@RequestBody UserLoginRequestDto userLoginRequestDto) {
+        return userLoginService.login(userLoginRequestDto);
     }
- */
 }
