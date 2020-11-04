@@ -1,54 +1,41 @@
 package com.taekyeong.tkgram.controller;
 
+import com.taekyeong.tkgram.service.UserJoinService;
 import com.taekyeong.tkgram.util.JwtTokenProvider;
-import com.taekyeong.tkgram.model.User;
-import com.taekyeong.tkgram.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.taekyeong.tkgram.dto.UserJoinRequestDto;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+@RequiredArgsConstructor
 @RestController
 public class UserController {
-    @Autowired(required = true)
-    private UserRepository userRepository;
-
+/*
     @Autowired(required = true)
     private JwtTokenProvider jwtTokenProvider;
+*/
+    private final UserJoinService userJoinService;
 
     @GetMapping("/hello")
     public String hello() {
         return "hello";
     }
 
-    @PostMapping(value = "/join", consumes = "application/json")
-    public @ResponseStatus Integer joinNewUser(@RequestBody User user) {
-        String email = user.getEmail();
-        String username = user.getUsername();
-        String password = user.getPassword();
-
-        if(email.length() == 0 || username.length() == 0 || password.length() == 0)
-            return 400;
-
-        User newUser = new User();
-        newUser.setUserindex(0);
-        newUser.setEmail(email);
-        newUser.setUsername(username);
-        newUser.setPassword(password);
-        userRepository.save(newUser);
-
-        return 200;
+    @PostMapping("/api/v1/join")
+    public Long joinNewUser(@RequestBody UserJoinRequestDto userJoinRequestDto) {
+        return userJoinService.saveUser(userJoinRequestDto);
     }
-
+/*
     @PostMapping(value = "/login", consumes = "application/json")
-    public @ResponseStatus Integer login(@RequestBody User user) {
+    public @ResponseStatus Integer login(@RequestBody UserDto userDto) {
 
-        if(user.getEmail().isEmpty())
+        if(userDto.getEmail().isEmpty())
             return 400;
 
-        if(user.getPassword().isEmpty())
+        if(userDto.getPassword().isEmpty())
             return 400;
 
-        if(userRepository.findByEmail(user.getEmail()).size() == 1) {
-            String token = jwtTokenProvider.createToken(user.getEmail());
+        if(userRepository.findByEmail(userDto.getEmail()).size() == 1) {
+            String token = jwtTokenProvider.createToken(userDto.getEmail());
             System.out.println(jwtTokenProvider.getSubject(token));
             return 200;
         }
@@ -56,4 +43,5 @@ public class UserController {
             return 413;
         }
     }
+ */
 }
