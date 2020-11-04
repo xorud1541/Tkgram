@@ -4,10 +4,7 @@ import com.taekyeong.tkgram.util.JwtTokenProvider;
 import com.taekyeong.tkgram.model.User;
 import com.taekyeong.tkgram.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class UserController {
@@ -16,6 +13,11 @@ public class UserController {
 
     @Autowired(required = true)
     private JwtTokenProvider jwtTokenProvider;
+
+    @GetMapping("/hello")
+    public String hello() {
+        return "hello";
+    }
 
     @PostMapping(value = "/join", consumes = "application/json")
     public @ResponseStatus Integer joinNewUser(@RequestBody User user) {
