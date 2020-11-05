@@ -1,12 +1,10 @@
 package com.taekyeong.tkgram.controller;
 
-import com.taekyeong.tkgram.dto.UserInfoResponseDto;
-import com.taekyeong.tkgram.dto.UserLoginRequestDto;
-import com.taekyeong.tkgram.service.UserInfoService;
-import com.taekyeong.tkgram.service.UserJoinService;
-import com.taekyeong.tkgram.service.UserLoginService;
-import com.taekyeong.tkgram.util.JwtTokenProvider;
-import com.taekyeong.tkgram.dto.UserJoinRequestDto;
+import com.taekyeong.tkgram.dto.user.UserLoginRequestDto;
+import com.taekyeong.tkgram.service.user.UserInfoService;
+import com.taekyeong.tkgram.service.user.UserJoinService;
+import com.taekyeong.tkgram.service.user.UserLoginService;
+import com.taekyeong.tkgram.dto.user.UserJoinRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -45,7 +43,7 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.OK).body(token);
     }
 
-    @GetMapping("/api/v1/my")
+    @GetMapping("/api/v1/user/my")
     public ResponseEntity getMyInfo(HttpServletRequest request) {
         String token = request.getHeader("Authorization");
         if(token == null)
@@ -54,4 +52,5 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(userInfoService.getUserInfo(token.substring("Bearer ".length())));
     }
+
 }
