@@ -38,8 +38,8 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-    public String getSubject(String token) {
+    public Long getUserindex(String token) {
         Jws<Claims> claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
-        return claims.getBody().getSubject();
+        return Long.parseLong(claims.getBody().getSubject());
     }
 }

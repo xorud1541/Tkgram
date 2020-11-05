@@ -20,10 +20,12 @@ public class UserLoginService {
     @Transactional
     public String login(UserLoginRequestDto userLoginRequestDto) {
         // 사용자 정보에 대한 유효성 검사
-
         String email = userLoginRequestDto.getEmail();
         String password = userLoginRequestDto.getPassword();
         String secretkey = userLoginRequestDto.getSecretkey();
+
+        if(email == null || password == null || secretkey == null)
+            return null;
 
         // 등록된 사용자인지 확인
         List<User> user = userRepository.findByEmailAndPassword(email, password);

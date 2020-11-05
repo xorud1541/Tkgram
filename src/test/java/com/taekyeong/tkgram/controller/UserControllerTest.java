@@ -1,5 +1,6 @@
 package com.taekyeong.tkgram.controller;
 
+import com.taekyeong.tkgram.dto.UserInfoResponseDto;
 import com.taekyeong.tkgram.dto.UserJoinRequestDto;
 import com.taekyeong.tkgram.dto.UserLoginRequestDto;
 import com.taekyeong.tkgram.entity.User;
@@ -14,6 +15,7 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
@@ -29,13 +31,13 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 //@AutoConfigureMockMvc
 public class UserControllerTest {
-
     /*
     @Autowired
     private MockMvc mvc;
@@ -58,38 +60,15 @@ public class UserControllerTest {
     @Autowired
     private UserRepository userRepository;
 
+    private MockHttpServletRequest mockHttpServletRequest;
+
     @After
     public void tearDown() throws Exception {
         userRepository.deleteAll();
     }
-/*
-    @Test
-    public HttpStatus 회원가입() throws Exception {
-        String email = "xorud1541@test.com";
-        String username = "jeon";
-        String password = "123";
-        UserJoinRequestDto userJoinRequestDto = UserJoinRequestDto.builder()
-                .email(email)
-                .username(username)
-                .password(password)
-                .build();
-
-        String url = "http://localhost:" + port + "/api/v1/join";
-
-        //when
-        ResponseEntity<Long> responseEntity = restTemplate.postForEntity(url, userJoinRequestDto, Long.class);
-
-        return responseEntity.getStatusCode();
-        //then
-        //assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
-        //assertThat(responseEntity.getBody()).isGreaterThan(0L);
-
-        // List<User> all = userRepository.findAll();
-    }
- */
 
     @Test
-    public void 로그인() throws Exception {
+    public void 내정보_가져오기() throws Exception {
         String email = "xorud1541@test.com";
         String password = "123";
         String username = "jeon";
@@ -102,23 +81,31 @@ public class UserControllerTest {
 
         String url = "http://localhost:" + port + "/api/v1/join";
 
-        //when
-        ResponseEntity<Long> joinResponseEntity = restTemplate.postForEntity(url, userJoinRequestDto, Long.class);
+        //회원 가입
+        ResponseEntity<HttpStatus> joinResponseEntity = restTemplate.postForEntity(url, userJoinRequestDto, HttpStatus.class);
         if(joinResponseEntity.getStatusCode() == HttpStatus.OK) {
 
             url = "http://localhost:" + port + "/api/v1/login";
             UserLoginRequestDto userLoginRequestDto = UserLoginRequestDto.builder()
                     .email(email)
                     .password(password)
-                    .secretkey("111")
+                    .secretkey("secret")
                     .build();
 
+            //로그인
             ResponseEntity<String> loginResponseEntity = restTemplate.postForEntity(url, userLoginRequestDto, String.class);
 
             assertThat(loginResponseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
 
             String token = loginResponseEntity.getBody();
-            System.out.println(token);
+
+            if(token != null)
+            {
+                url = "http://localhost:" + port + "/api/v1/my";
+
+                mockHttpServletRequest.addHeader("Authorization", "Bearer " + token);
+                //ResponseEntity<UserInfoResponseDto> entity = restTemplate.exchange(url, UserInfoResponseDto.class, mockHttpServletRequest);
+            }
         }
     }
 }
