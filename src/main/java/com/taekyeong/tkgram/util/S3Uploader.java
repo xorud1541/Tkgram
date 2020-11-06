@@ -1,4 +1,4 @@
-package com.example.springboot;
+package com.taekyeong.tkgram.util;
 
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
@@ -48,7 +48,7 @@ public class S3Uploader {
 
     public String uploadImage(MultipartFile file) throws IOException {
 
-        String fileName = DigestUtils.md5Hex(file.getInputStream());
+        String fileName = DigestUtils.md5Hex(file.getInputStream()) + ".png";
 
         amazonS3.putObject(new PutObjectRequest(bucket, fileName, file.getInputStream(), null)
                 .withCannedAcl(CannedAccessControlList.PublicRead));

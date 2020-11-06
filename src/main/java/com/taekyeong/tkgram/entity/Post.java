@@ -27,10 +27,10 @@ public class Post {
 
     @OneToMany
     @JoinColumn
-    private Collection<Photo> photos;
+    private List<Photo> photos;
 
     @Builder
-    public Post(Long poster, Long likes, String description, Collection<Photo> photos) {
+    public Post(Long poster, Long likes, String description, List<Photo> photos) {
         this.poster = poster;
         this.likes = likes;
         this.description = description;

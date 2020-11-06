@@ -13,7 +13,7 @@ public class PhotoDto {
     private String url;
 
     @Builder
-    public PhotoDto(Long post, String url) {
+    public PhotoDto(String url) {
         this.url = url;
     }
 
