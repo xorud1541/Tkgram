@@ -9,11 +9,11 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 public class FeedPost {
-    Long postidx;
+    Long post;
     List<Photo> photos;
 
-    public FeedPost(Long postidx, List<Photo> photos) {
-        this.postidx = postidx;
+    public FeedPost(Long post, List<Photo> photos) {
+        this.post = post;
         this.photos = photos;
     }
 }
