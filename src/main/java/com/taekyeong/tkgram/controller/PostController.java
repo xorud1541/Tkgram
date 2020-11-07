@@ -12,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.Map;
 
 @RequiredArgsConstructor
 @RestController
@@ -46,5 +47,21 @@ public class PostController {
     public HttpStatus deletePost(@PathVariable("id") Long postid) {
         postService.deletePost(postid);
         return HttpStatus.OK;
+    }
+
+    @PutMapping("/api/v1/post/{id}")
+    public HttpStatus putPost(@PathVariable("id") Long postid, @RequestBody Map<String, String> putObject, HttpServletRequest request) {
+        String token = request.getHeader("Authorization").substring("Bearer ".length());
+        if(token.length() == 0)
+            return HttpStatus.NOT_ACCEPTABLE;
+        else if(putObject.isEmpty() || putObject.get("description").length() == 0)
+            return HttpStatus.BAD_REQUEST;
+        else {
+            Long userIdx = jwtTokenProvider.getUserindex(token);
+            if(postService.putPost(postid, userIdx, putObject.get("description")))
+                return HttpStatus.OK;
+            else
+                return HttpStatus.BAD_REQUEST;
+        }
     }
 }

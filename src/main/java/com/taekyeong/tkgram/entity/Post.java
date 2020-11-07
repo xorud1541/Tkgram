@@ -38,4 +38,8 @@ public class Post {
         this.photos = photos;
         this.createdTime = createdTime;
     }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
 }

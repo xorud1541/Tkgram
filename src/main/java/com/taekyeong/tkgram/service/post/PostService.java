@@ -69,4 +69,21 @@ public class PostService {
     public void deletePost(Long idx) {
         postRepository.deleteById(idx);
     }
+
+    public boolean putPost(Long idx, Long userIdx, String description) {
+        Optional<Post> optional = postRepository.findById(idx);
+        if(optional.isPresent()) {
+            Post post = optional.get();
+
+            if(!post.getPoster().equals(userIdx))
+                return false;
+
+            post.setDescription(description);
+            postRepository.save(post);
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
 }
