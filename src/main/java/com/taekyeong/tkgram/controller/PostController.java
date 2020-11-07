@@ -41,4 +41,10 @@ public class PostController {
     public PostResponseDto getPost(@PathVariable("id") Long postid) {
         return postService.getPost(postid);
     }
+
+    @DeleteMapping("/api/v1/post/{id}")
+    public HttpStatus deletePost(@PathVariable("id") Long postid) {
+        postService.deletePost(postid);
+        return HttpStatus.OK;
+    }
 }

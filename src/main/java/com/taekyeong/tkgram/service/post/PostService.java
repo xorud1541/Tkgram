@@ -1,5 +1,6 @@
 package com.taekyeong.tkgram.service.post;
 
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import com.taekyeong.tkgram.dto.post.PhotoDto;
 import com.taekyeong.tkgram.dto.post.PostRequestDto;
 import com.taekyeong.tkgram.dto.post.PostResponseDto;
@@ -59,5 +60,9 @@ public class PostService {
                 .likes(post.getLikes())
                 .description(post.getDescription())
                 .build();
+    }
+
+    public void deletePost(Long idx) {
+        postRepository.deleteById(idx);
     }
 }
