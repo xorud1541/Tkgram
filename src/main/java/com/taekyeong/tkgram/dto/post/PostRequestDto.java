@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,6 +20,7 @@ public class PostRequestDto {
 
     private Long poster;
     private List<Photo> photos;
+    private Long createdTime;
 
     @Builder
     public PostRequestDto(List<MultipartFile> images, String description) {
@@ -31,12 +33,14 @@ public class PostRequestDto {
         this.poster = poster;
     }
 
+    public void setCreatedTime(Long createdTime) { this.createdTime = createdTime; }
+
     public Post toEntity() {
         return Post.builder()
                 .photos(photos)
                 .poster(poster)
                 .description(description)
-                .likes(0L)
+                .createdTime(createdTime)
                 .build();
     }
 }

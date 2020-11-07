@@ -45,6 +45,7 @@ public class UserController {
 
     @GetMapping("/api/v1/user/my")
     public ResponseEntity getMyInfo(HttpServletRequest request) {
+
         String token = request.getHeader("Authorization");
         if(token == null)
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("");

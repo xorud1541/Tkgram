@@ -14,6 +14,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,7 +29,7 @@ public class PostService {
     private final S3Uploader s3Uploader;
 
     @Transactional
-    public Long post(PostRequestDto postRequestDto) {
+    public Long savePost(PostRequestDto postRequestDto) {
         List<MultipartFile> images = postRequestDto.getImages();
         if(images.isEmpty())
             return 0L;
@@ -35,9 +38,11 @@ public class PostService {
             // 이미지 업로드
             String url = s3Uploader.uploadImage(images.get(0));
             if(!url.isEmpty()) {
+
                 // 업로드한 이미지 경로
                 Photo photo = photoService.postPhoto(PhotoDto.builder().url(url).build());
                 postRequestDto.getPhotos().add(photo);
+                postRequestDto.setCreatedTime(Instant.now().getEpochSecond());
 
                 // 게시물 업로드
                 return postRepository.save(postRequestDto.toEntity()).getPostindex();
@@ -57,7 +62,6 @@ public class PostService {
         return PostResponseDto.builder()
                 .photoList(post.getPhotos())
                 .poster(post.getPoster())
-                .likes(post.getLikes())
                 .description(post.getDescription())
                 .build();
     }

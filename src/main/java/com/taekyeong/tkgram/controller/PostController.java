@@ -21,7 +21,7 @@ public class PostController {
     private final JwtTokenProvider jwtTokenProvider;
 
     @PostMapping("/api/v1/post")
-    public ResponseEntity post(@RequestPart("description") String description, @RequestPart("images") List<MultipartFile> images, HttpServletRequest request) {
+    public ResponseEntity savePost(@RequestPart("description") String description, @RequestPart("images") List<MultipartFile> images, HttpServletRequest request) {
         String token = request.getHeader("Authorization").substring("Bearer ".length());
         if(token.length() == 0)
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("");
@@ -30,7 +30,7 @@ public class PostController {
         PostRequestDto postResponseDto = PostRequestDto.builder().description(description).images(images).build();
         postResponseDto.setPoster(poster);
 
-        Long postNum = postService.post(postResponseDto);
+        Long postNum = postService.savePost(postResponseDto);
         if(postNum > 0)
             return ResponseEntity.status(HttpStatus.OK).body(postNum);
         else

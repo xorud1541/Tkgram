@@ -3,8 +3,10 @@ package com.taekyeong.tkgram.entity;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
 
@@ -20,7 +22,7 @@ public class Post {
     private Long poster; // 게시자
 
     @Column
-    private Long likes;
+    private Long createdTime;
 
     @Column
     private String description;
@@ -30,10 +32,10 @@ public class Post {
     private List<Photo> photos;
 
     @Builder
-    public Post(Long poster, Long likes, String description, List<Photo> photos) {
+    public Post(Long poster, String description, List<Photo> photos, Long createdTime) {
         this.poster = poster;
-        this.likes = likes;
         this.description = description;
         this.photos = photos;
+        this.createdTime = createdTime;
     }
 }
