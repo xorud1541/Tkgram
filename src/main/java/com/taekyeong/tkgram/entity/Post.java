@@ -16,7 +16,7 @@ import java.util.List;
 public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long postindex;
+    private Long post;
 
     @Column
     private Long poster; // 게시자

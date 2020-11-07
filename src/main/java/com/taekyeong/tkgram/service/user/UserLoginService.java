@@ -31,7 +31,7 @@ public class UserLoginService {
         if(!user.isEmpty())
         {
             // 토큰 발급
-            return jwtTokenProvider.createToken(user.get(0).getUserindex().toString(), secretkey);
+            return jwtTokenProvider.createToken(user.get(0).getUser().toString(), secretkey);
         }
         else
         {

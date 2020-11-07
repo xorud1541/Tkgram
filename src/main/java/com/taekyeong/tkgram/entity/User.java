@@ -13,7 +13,7 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long userindex;
+    private Long user;
 
     @Column(length = 255, nullable = false)
     private String email;

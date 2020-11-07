@@ -27,7 +27,7 @@ public class FeedService {
         List<FeedPost> feedPosts = new ArrayList<>();
         List<Post> posts = postRepository.findByPoster(userIdx);
         for(Post post : posts)
-            feedPosts.add(new FeedPost(post.getPostindex(), post.getPhotos()));
+            feedPosts.add(new FeedPost(post.getPost(), post.getPhotos()));
 
         return FeedResponseDto.builder()
                 .email(user.getEmail())

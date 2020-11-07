@@ -21,6 +21,6 @@ public class UserJoinService {
         if(!user.isEmpty())
             return 0L;
 
-        return userRepository.save(userJoinRequestDto.toEntity()).getUserindex();
+        return userRepository.save(userJoinRequestDto.toEntity()).getUser();
     }
 }

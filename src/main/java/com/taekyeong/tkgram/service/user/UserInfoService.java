@@ -21,7 +21,7 @@ public class UserInfoService {
 
         return UserInfoResponseDto.builder()
                 .email(user.getEmail())
-                .userindex(user.getUserindex())
+                .userindex(user.getUser())
                 .username(user.getUsername())
                 .build();
     }

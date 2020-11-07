@@ -12,7 +12,7 @@ import javax.persistence.*;
 public class Photo {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long photoid;
+    private Long photo;
 
     @Column
     private String url;

@@ -45,7 +45,7 @@ public class PostService {
                 postRequestDto.setCreatedTime(Instant.now().getEpochSecond());
 
                 // 게시물 업로드
-                return postRepository.save(postRequestDto.toEntity()).getPostindex();
+                return postRepository.save(postRequestDto.toEntity()).getPost();
             }
             else {
                 return 0L;
@@ -60,7 +60,7 @@ public class PostService {
     public PostResponseDto getPost(Long idx) {
         Post post = postRepository.findById(idx).get();
         return PostResponseDto.builder()
-                .photoList(post.getPhotos())
+                .photos(post.getPhotos())
                 .poster(post.getPoster())
                 .description(post.getDescription())
                 .build();
