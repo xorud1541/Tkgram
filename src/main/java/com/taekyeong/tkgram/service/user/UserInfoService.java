@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @RequiredArgsConstructor
 @Service
 public class UserInfoService {
@@ -17,12 +19,20 @@ public class UserInfoService {
     @Transactional
     public UserInfoResponseDto getUserInfo(String token) {
         Long userindx = jwtTokenProvider.getUserindex(token);
-        User user = userRepository.findById(userindx).get();
+        Optional<User> optional = userRepository.findById(userindx);
 
-        return UserInfoResponseDto.builder()
-                .email(user.getEmail())
-                .userindex(user.getUser())
-                .username(user.getUsername())
-                .build();
+        if(optional.isPresent()) {
+            User user = optional.get();
+            return UserInfoResponseDto.builder()
+                    .user(user.getUser())
+                    .email(user.getEmail())
+                    .username(user.getUsername())
+                    .posts(user.getPosts())
+                    .build();
+        }
+        else {
+            return UserInfoResponseDto.builder()
+                    .build();
+        }
     }
 }
