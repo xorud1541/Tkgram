@@ -18,7 +18,7 @@ public class PostRequestDto {
     private List<MultipartFile> images;
     private String description;
 
-    private Long poster;
+    private User poster;
     private List<Photo> photos;
     private Long createdTime;
 
@@ -29,7 +29,7 @@ public class PostRequestDto {
         this.photos = new ArrayList<Photo>();
     }
 
-    public void setPoster(Long poster) {
+    public void setPoster(User poster) {
         this.poster = poster;
     }
 

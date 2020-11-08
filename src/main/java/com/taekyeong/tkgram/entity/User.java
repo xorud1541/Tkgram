@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Getter
 @NoArgsConstructor
@@ -23,6 +24,9 @@ public class User {
 
     @Column(length = 16, nullable = false)
     private String password;
+
+    @OneToMany(mappedBy = "poster")
+    private List<Post> posts;
 
     @Builder
     public User(String email, String username, String password) {

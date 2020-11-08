@@ -18,8 +18,9 @@ public class Post {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long post;
 
-    @Column
-    private Long poster; // 게시자
+    @ManyToOne
+    @JoinColumn(name = "user")
+    private User poster; // 게시자
 
     @Column
     private Long createdTime;
@@ -32,7 +33,7 @@ public class Post {
     private List<Photo> photos;
 
     @Builder
-    public Post(Long poster, String description, List<Photo> photos, Long createdTime) {
+    public Post(User poster, String description, List<Photo> photos, Long createdTime) {
         this.poster = poster;
         this.description = description;
         this.photos = photos;

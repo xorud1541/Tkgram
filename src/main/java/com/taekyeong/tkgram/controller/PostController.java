@@ -33,9 +33,8 @@ public class PostController {
 
         Long poster = jwtTokenProvider.getUserindex(token);
         PostRequestDto postResponseDto = PostRequestDto.builder().description(description).images(images).build();
-        postResponseDto.setPoster(poster);
 
-        Long postNum = postService.savePost(postResponseDto);
+        Long postNum = postService.savePost(postResponseDto, poster);
         if(postNum > 0)
             return ResponseEntity.status(HttpStatus.OK).body(postNum);
         else
