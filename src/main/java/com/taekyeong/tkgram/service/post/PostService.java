@@ -35,7 +35,7 @@ public class PostService {
     @Transactional
     public Long savePost(PostRequestDto postRequestDto, Long userIdx) {
         List<MultipartFile> images = postRequestDto.getImages();
-        if(images.isEmpty())
+        if(images.size() != 1)
             return 0L;
 
         try {
@@ -85,7 +85,7 @@ public class PostService {
         if(optional.isPresent()) {
             Post post = optional.get();
 
-            if(!post.getPoster().equals(userIdx))
+            if(!post.getPoster().getUser().equals(userIdx))
                 return false;
 
             post.setDescription(description);
