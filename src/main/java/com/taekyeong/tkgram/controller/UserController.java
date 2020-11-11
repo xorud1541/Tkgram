@@ -1,10 +1,12 @@
 package com.taekyeong.tkgram.controller;
 
-import com.taekyeong.tkgram.dto.user.UserLoginRequestDto;
+import com.taekyeong.tkgram.dto.user.request.UserLoginRequestDto;
+import com.taekyeong.tkgram.dto.user.request.UserPutInfoRequestDto;
 import com.taekyeong.tkgram.service.user.UserInfoService;
 import com.taekyeong.tkgram.service.user.UserJoinService;
 import com.taekyeong.tkgram.service.user.UserLoginService;
-import com.taekyeong.tkgram.dto.user.UserJoinRequestDto;
+import com.taekyeong.tkgram.dto.user.request.UserJoinRequestDto;
+import com.taekyeong.tkgram.service.user.UserPutInfoService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +24,7 @@ public class UserController {
     private final UserJoinService userJoinService;
     private final UserLoginService userLoginService;
     private final UserInfoService userInfoService;
+    private final UserPutInfoService userPutInfoService;
 
     @ApiOperation(value = "회원 가입", notes = "회원 가입을 합니다.")
     @PostMapping("/api/v1/join")
@@ -53,6 +56,17 @@ public class UserController {
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(userInfoService.getUserInfo(token.substring("Bearer ".length())));
+    }
+
+    @ApiOperation(value = "내 정보 수정하기", notes = "내 정보를 수정합니다.")
+    @PutMapping("/api/v1/user/my")
+    public HttpStatus putMyInfo(HttpServletRequest request, @RequestBody UserPutInfoRequestDto userPutInfoRequestDto) {
+        String token = request.getHeader("Authorization");
+        if(token == null)
+            return HttpStatus.NOT_ACCEPTABLE;
+        else {
+            return userPutInfoService.putUserInfo(token.substring("Bearer ".length()), userPutInfoRequestDto);
+        }
     }
 
 }

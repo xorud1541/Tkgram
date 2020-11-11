@@ -3,11 +3,13 @@ package com.taekyeong.tkgram.entity;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.List;
 
 @Getter
+@Setter
 @NoArgsConstructor
 @Entity
 public class User {
@@ -25,13 +27,17 @@ public class User {
     @Column(length = 16, nullable = false)
     private String password;
 
+    @Column
+    private String profile;
+
     @OneToMany(mappedBy = "poster")
     private List<Post> posts;
 
     @Builder
-    public User(String email, String username, String password) {
+    public User(String email, String username, String password, String profile) {
         this.email = email;
         this.username = username;
         this.password = password;
+        this.profile = profile;
     }
 }

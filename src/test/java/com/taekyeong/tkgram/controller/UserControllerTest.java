@@ -1,7 +1,7 @@
 package com.taekyeong.tkgram.controller;
 
-import com.taekyeong.tkgram.dto.user.UserJoinRequestDto;
-import com.taekyeong.tkgram.dto.user.UserLoginRequestDto;
+import com.taekyeong.tkgram.dto.user.request.UserJoinRequestDto;
+import com.taekyeong.tkgram.dto.user.request.UserLoginRequestDto;
 import com.taekyeong.tkgram.repository.UserRepository;
 import org.junit.After;
 import org.junit.Test;

@@ -1,9 +1,7 @@
 package com.taekyeong.tkgram.service.post;
 
 import com.taekyeong.tkgram.dto.post.PhotoDto;
-import com.taekyeong.tkgram.dto.user.UserInfoResponseDto;
 import com.taekyeong.tkgram.entity.Photo;
-import com.taekyeong.tkgram.entity.User;
 import com.taekyeong.tkgram.repository.PhotoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

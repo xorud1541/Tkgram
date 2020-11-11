@@ -1,4 +1,4 @@
-package com.taekyeong.tkgram.dto.user;
+package com.taekyeong.tkgram.dto.user.request;
 
 import lombok.Builder;
 import lombok.Getter;

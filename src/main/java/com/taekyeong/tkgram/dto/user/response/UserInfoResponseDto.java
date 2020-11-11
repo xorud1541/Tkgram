@@ -1,4 +1,4 @@
-package com.taekyeong.tkgram.dto.user;
+package com.taekyeong.tkgram.dto.user.response;
 
 import com.taekyeong.tkgram.entity.Post;
 import com.taekyeong.tkgram.entity.User;
@@ -14,14 +14,16 @@ public class UserInfoResponseDto {
     private Long user;
     private String email;
     private String username;
+    private String profile;
     private List<Post> posts;
 
     @Builder
-    public UserInfoResponseDto(Long user, String email, String username, List<Post> posts) {
+    public UserInfoResponseDto(Long user, String email, String username, List<Post> posts, String profile) {
         this.user = user;
         this.email = email;
         this.username = username;
         this.posts = posts;
+        this.profile = profile;
     }
 
 }

@@ -1,6 +1,6 @@
 package com.taekyeong.tkgram.service.user;
 
-import com.taekyeong.tkgram.dto.user.UserJoinRequestDto;
+import com.taekyeong.tkgram.dto.user.request.UserJoinRequestDto;
 import com.taekyeong.tkgram.entity.User;
 import com.taekyeong.tkgram.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
