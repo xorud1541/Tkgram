@@ -21,6 +21,10 @@ public class JwtTokenProvider {
         this.validityInMilliseconds = validityInMilliseconds;
     }
 
+    public Long getExpireTime() {
+        return this.validityInMilliseconds;
+    }
+
     public String createToken(String subject, String secretKey) {
         if(!secretKey.equals(this.secretKey))
             return null;

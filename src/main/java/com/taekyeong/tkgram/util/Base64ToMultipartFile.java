@@ -4,6 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.*;
 
 public class Base64ToMultipartFile implements MultipartFile {
@@ -63,5 +66,17 @@ public class Base64ToMultipartFile implements MultipartFile {
     public void transferTo(File dest) throws IOException, IllegalStateException
     {
         new FileOutputStream(dest).write(imgContent);
+    }
+
+    public static InputStream resizeImage(InputStream inputStream, int width, int height, String formatName) throws IOException {
+        BufferedImage sourceImage = ImageIO.read(inputStream);
+        Image thumbnail = sourceImage.getScaledInstance(width, height, Image.SCALE_SMOOTH);
+        BufferedImage bufferedThumbnail = new BufferedImage(thumbnail.getWidth(null),
+                thumbnail.getHeight(null),
+                BufferedImage.TYPE_INT_RGB);
+        bufferedThumbnail.getGraphics().drawImage(thumbnail, 0, 0, null);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ImageIO.write(bufferedThumbnail, formatName, baos);
+        return new ByteArrayInputStream(baos.toByteArray());
     }
 }

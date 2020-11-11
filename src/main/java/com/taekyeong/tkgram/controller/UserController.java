@@ -33,12 +33,13 @@ public class UserController {
     }
 
     @PostMapping("/api/v1/login")
-    public ResponseEntity loginUser(@RequestBody UserDto.RequestLoginUser requestLoginUser) {
-        String token = userLoginService.login(requestLoginUser);
-        if(token == null)
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("");
-        else
-            return ResponseEntity.status(HttpStatus.OK).body(token);
+    public ResponseEntity<UserDto.ResponseLoginUser> loginUser(@RequestBody UserDto.RequestLoginUser requestLoginUser) {
+        UserDto.ResponseLoginUser responseLoginUser = userLoginService.login(requestLoginUser);
+        if(responseLoginUser == null)
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(UserDto.ResponseLoginUser.builder().build());
+        else {
+            return ResponseEntity.status(HttpStatus.OK).body(responseLoginUser);
+        }
     }
 
     @GetMapping("/api/v1/user/{id}")

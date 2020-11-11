@@ -3,6 +3,7 @@ package com.taekyeong.tkgram.entity;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
@@ -11,6 +12,7 @@ import java.util.Collection;
 import java.util.List;
 
 @Getter
+@Setter
 @NoArgsConstructor
 @Entity
 public class Post {
@@ -28,19 +30,19 @@ public class Post {
     @Column
     private String description;
 
+    @Column
+    private String thumbnail;
+
     @OneToMany
     @JoinColumn
     private List<Photo> photos;
 
     @Builder
-    public Post(User poster, String description, List<Photo> photos, Long createdTime) {
+    public Post(User poster, String description, List<Photo> photos, Long createdTime, String thumbnail) {
         this.poster = poster;
         this.description = description;
         this.photos = photos;
         this.createdTime = createdTime;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
+        this.thumbnail = thumbnail;
     }
 }

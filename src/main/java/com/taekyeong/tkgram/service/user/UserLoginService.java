@@ -17,7 +17,7 @@ public class UserLoginService {
     private final JwtTokenProvider jwtTokenProvider;
 
     @Transactional
-    public String login(UserDto.RequestLoginUser requestLoginUser) {
+    public UserDto.ResponseLoginUser login(UserDto.RequestLoginUser requestLoginUser) {
         // 사용자 정보에 대한 유효성 검사
         String email = requestLoginUser.getEmail();
         String password = requestLoginUser.getPassword();
@@ -30,8 +30,12 @@ public class UserLoginService {
         List<User> user = userRepository.findByEmailAndPassword(email, password);
         if(user.size() == 1)
         {
-            // 토큰 발급
-            return jwtTokenProvider.createToken(user.get(0).getUser().toString(), secretkey);
+            UserDto.ResponseLoginUser responseLoginUser = new UserDto.ResponseLoginUser();
+            responseLoginUser.setUser(user.get(0).getUser());
+            responseLoginUser.setToken(jwtTokenProvider.createToken(user.get(0).getUser().toString(), secretkey));
+            responseLoginUser.setExpireTime(jwtTokenProvider.getExpireTime());
+
+            return responseLoginUser;
         }
         else
         {

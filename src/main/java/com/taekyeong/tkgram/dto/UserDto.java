@@ -89,4 +89,20 @@ public class UserDto {
             this.profile = profile;
         }
     }
+
+    @Setter
+    @Getter
+    @NoArgsConstructor
+    public static class ResponseLoginUser {
+        private Long user;
+        private String token;
+        private Long expireTime;
+
+        @Builder
+        public ResponseLoginUser(Long user, String token, Long expireTime) {
+            this.user = user;
+            this.token = token;
+            this.expireTime = expireTime;
+        }
+    }
 }

@@ -12,6 +12,7 @@ import com.taekyeong.tkgram.util.S3Uploader;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.Instant;
@@ -32,33 +33,38 @@ public class PostService {
     @Transactional
     public Long savePost(PostDto.RequestAddPost requestAddPost, Long userIdx) {
         List<String> photos = requestAddPost.getPhotos();
-        if(photos.size() != 1)
+        if(photos.isEmpty())
             return 0L;
 
         try {
-            // 이미지 업로드
-            Base64.Decoder decoder = Base64.getDecoder();
-            byte[] bytes = decoder.decode(photos.get(0).getBytes());
-            Base64ToMultipartFile multipartFile = new Base64ToMultipartFile(bytes);
+            List<MultipartFile> multipartFiles = new ArrayList<>();
 
-            String url = s3Uploader.uploadImage(multipartFile);
-            if(!url.isEmpty()) {
+            for(String photo : photos) {
+                Base64.Decoder decoder = Base64.getDecoder();
+                byte[] bytes = decoder.decode(photo.getBytes());
+                Base64ToMultipartFile multipartFile = new Base64ToMultipartFile(bytes);
+                multipartFiles.add(multipartFile);
+            }
+            // 이미지 업로드
+            List<String> imageUrls = s3Uploader.uploadImages(multipartFiles);
+            String thumbnailUrl = s3Uploader.uploadThumbnail(multipartFiles.get(0));
+            if(!imageUrls.isEmpty()) {
                 Optional<User> optional = userRepository.findById(userIdx);
                 if(optional.isPresent()) {
-                    Photo photo = photoService.postPhoto(PhotoDto.builder().url(url).build());
-
-                    // 게시물 업로드
                     PostDto postDto = new PostDto();
-                    postDto.setDescription(requestAddPost.getDescription());
-                    postDto.setPoster(optional.get());
-                    postDto.setCreatedTime(Instant.now().getEpochSecond());
+                    postDto.setDescription(requestAddPost.getDescription()); // 게시물 설명
+                    postDto.setPoster(optional.get()); // 게시자
+                    postDto.setCreatedTime(Instant.now().getEpochSecond()); // 게시한 시간
 
-                    List<Photo> photoList = new ArrayList<>();
-                    photoList.add(photo);
+                    List<Photo> photoList = new ArrayList<>(); // 게시물들
+                    for(String imageUrl : imageUrls) {
+                        Photo photo = photoService.postPhoto(PhotoDto.builder().url(imageUrl).build());
+                        photoList.add(photo);
+                    }
                     postDto.setPhotos(photoList);
+                    postDto.setThumbnail(thumbnailUrl); // 게시물 썸네일 주소
 
                     return postRepository.save(postDto.toEntity()).getPost();
-
                 }
                 else
                     return 0L;
@@ -79,6 +85,7 @@ public class PostService {
                 .photos(post.getPhotos())
                 .poster(post.getPoster().getUser())
                 .description(post.getDescription())
+                .thumbnail(post.getThumbnail())
                 .build();
     }
 

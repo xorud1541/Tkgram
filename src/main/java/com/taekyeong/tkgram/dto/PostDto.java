@@ -17,13 +17,15 @@ public class PostDto {
     private String description;
     private User poster;
     private Long createdTime;
+    private String thumbnail;
     private List<Photo> photos;
 
-    @Builder PostDto(String description, User poster, Long createdTime, List<Photo> photos) {
+    @Builder PostDto(String description, User poster, Long createdTime, List<Photo> photos, String thumbnail) {
         this.description = description;
         this.poster = poster;
         this.createdTime = createdTime;
         this.photos = photos;
+        this.thumbnail = thumbnail;
     }
 
     public Post toEntity() {
@@ -31,6 +33,7 @@ public class PostDto {
                 .description(description)
                 .poster(poster)
                 .createdTime(createdTime)
+                .thumbnail(thumbnail)
                 .photos(photos)
                 .build();
     }
@@ -58,12 +61,14 @@ public class PostDto {
         private List<Photo> photos;
         private Long poster;
         private String description;
+        private String thumbnail;
 
         @Builder
-        public ResponsePostInfo(List<Photo> photos, Long poster, String description) {
+        public ResponsePostInfo(List<Photo> photos, Long poster, String description, String thumbnail) {
             this.photos = photos;
             this.poster = poster;
             this.description = description;
+            this.thumbnail = thumbnail;
         }
     }
 }
