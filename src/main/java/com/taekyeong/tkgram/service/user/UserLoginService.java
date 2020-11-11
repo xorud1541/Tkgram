@@ -1,6 +1,6 @@
 package com.taekyeong.tkgram.service.user;
 
-import com.taekyeong.tkgram.dto.user.request.UserLoginRequestDto;
+import com.taekyeong.tkgram.dto.UserDto;
 import com.taekyeong.tkgram.entity.User;
 import com.taekyeong.tkgram.repository.UserRepository;
 import com.taekyeong.tkgram.util.JwtTokenProvider;
@@ -17,18 +17,18 @@ public class UserLoginService {
     private final JwtTokenProvider jwtTokenProvider;
 
     @Transactional
-    public String login(UserLoginRequestDto userLoginRequestDto) {
+    public String login(UserDto.RequestLoginUser requestLoginUser) {
         // 사용자 정보에 대한 유효성 검사
-        String email = userLoginRequestDto.getEmail();
-        String password = userLoginRequestDto.getPassword();
-        String secretkey = userLoginRequestDto.getSecretkey();
+        String email = requestLoginUser.getEmail();
+        String password = requestLoginUser.getPassword();
+        String secretkey = requestLoginUser.getSecretKey();
 
         if(email == null || password == null || secretkey == null)
             return null;
 
         // 등록된 사용자인지 확인
         List<User> user = userRepository.findByEmailAndPassword(email, password);
-        if(!user.isEmpty())
+        if(user.size() == 1)
         {
             // 토큰 발급
             return jwtTokenProvider.createToken(user.get(0).getUser().toString(), secretkey);

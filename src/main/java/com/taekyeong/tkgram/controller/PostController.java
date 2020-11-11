@@ -1,7 +1,6 @@
 package com.taekyeong.tkgram.controller;
 
-import com.taekyeong.tkgram.dto.post.PostRequestDto;
-import com.taekyeong.tkgram.dto.post.PostResponseDto;
+import com.taekyeong.tkgram.dto.PostDto;
 import com.taekyeong.tkgram.service.post.PostService;
 import com.taekyeong.tkgram.util.JwtTokenProvider;
 import io.swagger.annotations.Api;
@@ -24,39 +23,33 @@ public class PostController {
     private final PostService postService;
     private final JwtTokenProvider jwtTokenProvider;
 
-    @ApiOperation(value = "게시물 올리기", notes = "게시물을 올립니다.")
     @PostMapping("/api/v1/post")
-    public ResponseEntity savePost(@RequestPart("description") String description, @RequestPart("images") List<MultipartFile> images, HttpServletRequest request) {
+    public ResponseEntity savePost(HttpServletRequest request, @RequestBody PostDto.RequestAddPost requestAddPost) {
         String token = request.getHeader("Authorization").substring("Bearer ".length());
         if(token.length() == 0)
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("");
 
         Long poster = jwtTokenProvider.getUserindex(token);
-        PostRequestDto postResponseDto = PostRequestDto.builder().description(description).images(images).build();
-
-        Long postNum = postService.savePost(postResponseDto, poster);
+        Long postNum = postService.savePost(requestAddPost, poster);
         if(postNum > 0)
             return ResponseEntity.status(HttpStatus.OK).body(postNum);
         else
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("");
     }
 
-    @ApiOperation(value = "게시물 가져오기", notes = "특정 게시물에 대한 정보를 가져옵니다.")
     @GetMapping("/api/v1/post/{id}")
-    public PostResponseDto getPost(@PathVariable("id") Long postid) {
-        return postService.getPost(postid);
+    public PostDto.ResponsePostInfo getPost(@PathVariable("id") Long post) {
+        return postService.getPost(post);
     }
 
-    @ApiOperation(value = "게시물 삭제", notes = "특정 게시물을 삭제합니다.")
     @DeleteMapping("/api/v1/post/{id}")
-    public HttpStatus deletePost(@PathVariable("id") Long postid) {
-        postService.deletePost(postid);
+    public HttpStatus deletePost(@PathVariable("id") Long post) {
+        postService.deletePost(post);
         return HttpStatus.OK;
     }
 
-    @ApiOperation(value = "게시물 수정하기", notes = "특정 게시물에 대한 설명을 수정합니다.")
     @PutMapping("/api/v1/post/{id}")
-    public HttpStatus putPost(@PathVariable("id") Long postid, @RequestBody Map<String, String> putObject, HttpServletRequest request) {
+    public HttpStatus putPost(HttpServletRequest request, @PathVariable("id") Long post, @RequestBody Map<String, String> putObject) {
         String token = request.getHeader("Authorization").substring("Bearer ".length());
         if(token.length() == 0)
             return HttpStatus.NOT_ACCEPTABLE;
@@ -64,7 +57,7 @@ public class PostController {
             return HttpStatus.BAD_REQUEST;
         else {
             Long userIdx = jwtTokenProvider.getUserindex(token);
-            if(postService.putPost(postid, userIdx, putObject.get("description")))
+            if(postService.putPost(post, userIdx, putObject.get("description")))
                 return HttpStatus.OK;
             else
                 return HttpStatus.BAD_REQUEST;

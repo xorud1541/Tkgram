@@ -1,6 +1,6 @@
 package com.taekyeong.tkgram.service.user;
 
-import com.taekyeong.tkgram.dto.user.response.UserInfoResponseDto;
+import com.taekyeong.tkgram.dto.UserDto;
 import com.taekyeong.tkgram.entity.User;
 import com.taekyeong.tkgram.repository.UserRepository;
 import com.taekyeong.tkgram.util.JwtTokenProvider;
@@ -17,22 +17,21 @@ public class UserInfoService {
     private final UserRepository userRepository;
 
     @Transactional
-    public UserInfoResponseDto getUserInfo(String token) {
+    public UserDto.ResponseUserInfo getUserInfo(String token) {
         Long userIdx = jwtTokenProvider.getUserindex(token);
         Optional<User> optional = userRepository.findById(userIdx);
 
         if(optional.isPresent()) {
             User user = optional.get();
-            return UserInfoResponseDto.builder()
+            return UserDto.ResponseUserInfo.builder()
                     .user(user.getUser())
                     .email(user.getEmail())
                     .username(user.getUsername())
                     .profile(user.getProfile())
-                    .posts(user.getPosts())
                     .build();
         }
         else {
-            return UserInfoResponseDto.builder()
+            return UserDto.ResponseUserInfo.builder()
                     .build();
         }
     }

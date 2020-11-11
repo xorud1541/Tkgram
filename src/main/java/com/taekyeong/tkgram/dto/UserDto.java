@@ -1,0 +1,92 @@
+package com.taekyeong.tkgram.dto;
+
+import com.taekyeong.tkgram.entity.Post;
+import com.taekyeong.tkgram.entity.User;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import java.util.List;
+
+@NoArgsConstructor
+public class UserDto {
+
+    // User Request
+
+    @Setter
+    @Getter
+    @NoArgsConstructor
+    public static class RequestJoinUser {
+        private String email;
+        private String username;
+        private String password;
+
+        @Builder
+        public RequestJoinUser (String email, String username, String password) {
+            this.email = email;
+            this.username = username;
+            this.password = password;
+        }
+
+        public User toEntity() {
+            return User.builder()
+                    .email(email)
+                    .username(username)
+                    .password(password)
+                    .build();
+        }
+    }
+
+    @Setter
+    @Getter
+    @NoArgsConstructor
+    public static class RequestLoginUser {
+        private String email;
+        private String password;
+        private String secretKey;
+
+        @Builder
+        public RequestLoginUser(String email, String password, String secretKey) {
+            this.email = email;
+            this.password = password;
+            this.secretKey = secretKey;
+        }
+    }
+
+    @Setter
+    @Getter
+    @NoArgsConstructor
+    public static class RequestPutUserInfo {
+        private String username;
+        private String profile_edit_type;
+        private String profile_image_base64;
+
+        @Builder
+        public RequestPutUserInfo(String username, String profile_edit_type, String profile_image_base64) {
+            this.username = username;
+            this.profile_edit_type = profile_edit_type;
+            this.profile_image_base64 = profile_image_base64;
+        }
+    }
+
+
+    // User Response
+
+    @Setter
+    @Getter
+    @NoArgsConstructor
+    public static class ResponseUserInfo {
+        private Long user;
+        private String email;
+        private String username;
+        private String profile;
+
+        @Builder
+        public ResponseUserInfo(Long user, String email, String username, String profile, List<Post> posts) {
+            this.user = user;
+            this.email = email;
+            this.username = username;
+            this.profile = profile;
+        }
+    }
+}

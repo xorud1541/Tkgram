@@ -1,6 +1,6 @@
 package com.taekyeong.tkgram.service.post;
 
-import com.taekyeong.tkgram.dto.post.PhotoDto;
+import com.taekyeong.tkgram.dto.PhotoDto;
 import com.taekyeong.tkgram.entity.Photo;
 import com.taekyeong.tkgram.repository.PhotoRepository;
 import lombok.RequiredArgsConstructor;

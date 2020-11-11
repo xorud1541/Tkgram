@@ -1,4 +1,4 @@
-package com.taekyeong.tkgram.dto.post;
+package com.taekyeong.tkgram.dto;
 
 import com.taekyeong.tkgram.entity.Photo;
 import com.taekyeong.tkgram.entity.Post;

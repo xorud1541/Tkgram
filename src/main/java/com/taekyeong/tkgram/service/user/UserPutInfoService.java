@@ -1,7 +1,7 @@
 package com.taekyeong.tkgram.service.user;
 
 import com.fasterxml.jackson.databind.ser.Serializers;
-import com.taekyeong.tkgram.dto.user.request.UserPutInfoRequestDto;
+import com.taekyeong.tkgram.dto.UserDto;
 import com.taekyeong.tkgram.entity.User;
 import com.taekyeong.tkgram.repository.UserRepository;
 import com.taekyeong.tkgram.util.Base64ToMultipartFile;
@@ -26,7 +26,7 @@ public class UserPutInfoService {
     private final S3Uploader s3Uploader;
 
     @Transactional
-    public HttpStatus putUserInfo(String token, UserPutInfoRequestDto userPutInfoRequestDto) {
+    public HttpStatus putUserInfo(String token, UserDto.RequestPutUserInfo requestPutUserInfo) {
         Long userIdx = jwtTokenProvider.getUserindex(token);
         Optional<User> optional = userRepository.findById(userIdx);
 
@@ -34,15 +34,23 @@ public class UserPutInfoService {
         {
             User user = optional.get();
 
+            // Put Username
             String currentUsername = user.getUsername();
+            String nextUsername = requestPutUserInfo.getUsername();
+
+            if(nextUsername != null && !currentUsername.equals(nextUsername))
+            {
+                user.setUsername(nextUsername);
+            }
+
+            // Put Profile Url
             String currentProfileUrl = user.getProfile();
-
-            String nextUsername = userPutInfoRequestDto.getUsername();
             String nextProfileUrl = null;
-            String profileEditType = userPutInfoRequestDto.getProfile_edit_type();
+            String profileEditType = requestPutUserInfo.getProfile_edit_type();
 
+            // Base64 -> MultipartFile
             Base64.Decoder decoder = Base64.getDecoder();
-            byte[] bytes = decoder.decode(userPutInfoRequestDto.getProfile_image_base64().getBytes());
+            byte[] bytes = decoder.decode(requestPutUserInfo.getProfile_image_base64().getBytes());
             Base64ToMultipartFile multipartFile = new Base64ToMultipartFile(bytes);
 
             boolean isExist;
@@ -88,7 +96,6 @@ public class UserPutInfoService {
             }
 
             user.setProfile(nextProfileUrl);
-            user.setUsername(nextUsername);
             userRepository.save(user);
 
             return HttpStatus.OK;

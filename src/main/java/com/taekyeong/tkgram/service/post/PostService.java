@@ -1,25 +1,22 @@
 package com.taekyeong.tkgram.service.post;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
-import com.taekyeong.tkgram.dto.post.PhotoDto;
-import com.taekyeong.tkgram.dto.post.PostRequestDto;
-import com.taekyeong.tkgram.dto.post.PostResponseDto;
+import com.taekyeong.tkgram.dto.PostDto;
+import com.taekyeong.tkgram.dto.PhotoDto;
 import com.taekyeong.tkgram.entity.Photo;
 import com.taekyeong.tkgram.entity.Post;
 import com.taekyeong.tkgram.entity.User;
 import com.taekyeong.tkgram.repository.PostRepository;
 import com.taekyeong.tkgram.repository.UserRepository;
+import com.taekyeong.tkgram.util.Base64ToMultipartFile;
 import com.taekyeong.tkgram.util.S3Uploader;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.Instant;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,26 +30,35 @@ public class PostService {
     private final S3Uploader s3Uploader;
 
     @Transactional
-    public Long savePost(PostRequestDto postRequestDto, Long userIdx) {
-        List<MultipartFile> images = postRequestDto.getImages();
-        if(images.size() != 1)
+    public Long savePost(PostDto.RequestAddPost requestAddPost, Long userIdx) {
+        List<String> photos = requestAddPost.getPhotos();
+        if(photos.size() != 1)
             return 0L;
 
         try {
             // 이미지 업로드
-            String url = s3Uploader.uploadImage(images.get(0));
+            Base64.Decoder decoder = Base64.getDecoder();
+            byte[] bytes = decoder.decode(photos.get(0).getBytes());
+            Base64ToMultipartFile multipartFile = new Base64ToMultipartFile(bytes);
+
+            String url = s3Uploader.uploadImage(multipartFile);
             if(!url.isEmpty()) {
-
-                // 업로드한 이미지 경로
-                Photo photo = photoService.postPhoto(PhotoDto.builder().url(url).build());
-                postRequestDto.getPhotos().add(photo);
-                postRequestDto.setCreatedTime(Instant.now().getEpochSecond());
-
                 Optional<User> optional = userRepository.findById(userIdx);
                 if(optional.isPresent()) {
-                    postRequestDto.setPoster(optional.get());
+                    Photo photo = photoService.postPhoto(PhotoDto.builder().url(url).build());
+
                     // 게시물 업로드
-                    return postRepository.save(postRequestDto.toEntity()).getPost();
+                    PostDto postDto = new PostDto();
+                    postDto.setDescription(requestAddPost.getDescription());
+                    postDto.setPoster(optional.get());
+                    postDto.setCreatedTime(Instant.now().getEpochSecond());
+
+                    List<Photo> photoList = new ArrayList<>();
+                    photoList.add(photo);
+                    postDto.setPhotos(photoList);
+
+                    return postRepository.save(postDto.toEntity()).getPost();
+
                 }
                 else
                     return 0L;
@@ -67,9 +73,9 @@ public class PostService {
         }
     }
 
-    public PostResponseDto getPost(Long idx) {
+    public PostDto.ResponsePostInfo getPost(Long idx) {
         Post post = postRepository.findById(idx).get();
-        return PostResponseDto.builder()
+        return PostDto.ResponsePostInfo.builder()
                 .photos(post.getPhotos())
                 .poster(post.getPoster().getUser())
                 .description(post.getDescription())
