@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
+@Api(tags = {"1. User"})
 @RequiredArgsConstructor
 @RestController
 public class UserController {
@@ -23,6 +24,7 @@ public class UserController {
     private final UserInfoService userInfoService;
     private final UserPutInfoService userPutInfoService;
 
+    @ApiOperation(value = "회원가입")
     @PostMapping("/api/v1/join")
     public HttpStatus joinNewUser(@RequestBody UserDto.RequestJoinUser requestJoinUser) {
         Long userIdx = userJoinService.saveUser(requestJoinUser);
@@ -32,6 +34,7 @@ public class UserController {
             return HttpStatus.BAD_REQUEST;
     }
 
+    @ApiOperation(value = "로그인")
     @PostMapping("/api/v1/login")
     public ResponseEntity<UserDto.ResponseLoginUser> loginUser(@RequestBody UserDto.RequestLoginUser requestLoginUser) {
         UserDto.ResponseLoginUser responseLoginUser = userLoginService.login(requestLoginUser);
@@ -42,6 +45,7 @@ public class UserController {
         }
     }
 
+    @ApiOperation(value = "유저 정보보기")
     @GetMapping("/api/v1/user/{id}")
     public ResponseEntity<UserDto.ResponseUserInfo> getUserInfo(HttpServletRequest request, @PathVariable("id") Long user) {
         String token = request.getHeader("Authorization");
@@ -54,6 +58,7 @@ public class UserController {
         }
     }
 
+    @ApiOperation(value = "내 정보 수정하기")
     @PutMapping("/api/v1/user/my")
     public HttpStatus putMyInfo(HttpServletRequest request, @RequestBody UserDto.RequestPutUserInfo requestPutUserInfo) {
         String token = request.getHeader("Authorization");

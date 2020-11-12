@@ -23,6 +23,7 @@ public class PostController {
     private final PostService postService;
     private final JwtTokenProvider jwtTokenProvider;
 
+    @ApiOperation(value = "게시물 등록하기")
     @PostMapping("/api/v1/post")
     public ResponseEntity savePost(HttpServletRequest request, @RequestBody PostDto.RequestAddPost requestAddPost) {
         String token = request.getHeader("Authorization").substring("Bearer ".length());
@@ -37,17 +38,20 @@ public class PostController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("");
     }
 
+    @ApiOperation(value = "게시물 가져오기")
     @GetMapping("/api/v1/post/{id}")
     public PostDto.ResponsePostInfo getPost(@PathVariable("id") Long post) {
         return postService.getPost(post);
     }
 
+    @ApiOperation(value = "게시물 삭제하기")
     @DeleteMapping("/api/v1/post/{id}")
     public HttpStatus deletePost(@PathVariable("id") Long post) {
         postService.deletePost(post);
         return HttpStatus.OK;
     }
 
+    @ApiOperation(value = "게시물 수정하기")
     @PutMapping("/api/v1/post/{id}")
     public HttpStatus putPost(HttpServletRequest request, @PathVariable("id") Long post, @RequestBody Map<String, String> putObject) {
         String token = request.getHeader("Authorization").substring("Bearer ".length());
