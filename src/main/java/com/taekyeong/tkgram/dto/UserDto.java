@@ -85,16 +85,18 @@ public class UserDto {
         private String profile;
         private int followersCnt;
         private int followeesCnt;
+        private int relation;
 
         @Builder
         public ResponseUserInfo(Long user, String email, String username, String profile, List<Post> posts,
-                                int followersCnt, int followeesCnt) {
+                                int followersCnt, int followeesCnt, int relation) {
             this.user = user;
             this.email = email;
             this.username = username;
             this.profile = profile;
             this.followersCnt = followersCnt;
             this.followeesCnt = followeesCnt;
+            this.relation = relation;
         }
     }
 

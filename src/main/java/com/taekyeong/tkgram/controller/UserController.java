@@ -2,6 +2,7 @@ package com.taekyeong.tkgram.controller;
 
 import com.taekyeong.tkgram.dto.UserDto;
 import com.taekyeong.tkgram.service.user.*;
+import com.taekyeong.tkgram.util.JwtTokenProvider;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,7 @@ public class UserController {
     private final UserInfoService userInfoService;
     private final UserPutInfoService userPutInfoService;
     private final UserFeedInfoService userFeedInfoService;
+    private final JwtTokenProvider jwtTokenProvider;
 
     @ApiOperation(value = "회원가입")
     @PostMapping("/api/v1/join")
@@ -51,7 +53,8 @@ public class UserController {
         if(token == null)
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(UserDto.ResponseUserInfo.builder().build());
         else {
-            return ResponseEntity.status(HttpStatus.OK).body(userInfoService.getUserInfo(user));
+            Long myUserIdx = jwtTokenProvider.getUserindex(token.substring("Barear ".length()));
+            return ResponseEntity.status(HttpStatus.OK).body(userInfoService.getUserInfo(myUserIdx, user));
         }
     }
 

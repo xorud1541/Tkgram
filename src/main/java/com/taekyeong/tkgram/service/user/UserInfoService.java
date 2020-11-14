@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.swing.text.html.Option;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Optional;
@@ -18,23 +19,41 @@ import java.util.List;
 @RequiredArgsConstructor
 @Service
 public class UserInfoService {
-    private final JwtTokenProvider jwtTokenProvider;
     private final UserRepository userRepository;
     private final FollowRepository followRepository;
 
     @Transactional
-    public UserDto.ResponseUserInfo getUserInfo(Long userIdx) {
-        Optional<User> optional = userRepository.findById(userIdx);
+    public UserDto.ResponseUserInfo getUserInfo(Long myUserIdx, Long userIdx) {
 
-        if(optional.isPresent()) {
-            User user = optional.get();
+        int relation = -1;
+        Optional<User> optionalMyUser = userRepository.findById(myUserIdx);
+        Optional<User> optionalUser = userRepository.findById(userIdx);
+
+        if(optionalMyUser.isPresent() && optionalUser.isPresent()) {
+            User myUserInfo = optionalMyUser.get();
+            User userInfo = optionalUser.get();
+
+            if(myUserInfo.getUser().equals(userInfo.getUser())) {
+                relation = 0;
+            }
+            else {
+                Optional<Follow> optional = followRepository.findByFromAndTo(myUserInfo, userInfo);
+                if(optional.isPresent()) {
+                    relation = 1;
+                }
+                else {
+                    relation = 2;
+                }
+            }
+
             return UserDto.ResponseUserInfo.builder()
-                    .user(user.getUser())
-                    .email(user.getEmail())
-                    .username(user.getUsername())
-                    .profile(user.getProfile())
-                    .followersCnt(user.getFollowers().size())
-                    .followeesCnt(user.getFollowees().size())
+                    .user(userInfo.getUser())
+                    .email(userInfo.getEmail())
+                    .username(userInfo.getUsername())
+                    .profile(userInfo.getProfile())
+                    .followersCnt(userInfo.getFollowers().size())
+                    .followeesCnt(userInfo.getFollowees().size())
+                    .relation(relation)
                     .build();
         }
         else {
