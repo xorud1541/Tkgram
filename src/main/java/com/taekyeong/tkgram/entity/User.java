@@ -31,6 +31,7 @@ public class User {
     private String profile;
 
     @OneToMany(mappedBy = "poster")
+    @OrderBy("createdTime desc")
     private List<Post> posts;
 
     @Builder

@@ -1,10 +1,7 @@
 package com.taekyeong.tkgram.controller;
 
 import com.taekyeong.tkgram.dto.UserDto;
-import com.taekyeong.tkgram.service.user.UserInfoService;
-import com.taekyeong.tkgram.service.user.UserJoinService;
-import com.taekyeong.tkgram.service.user.UserLoginService;
-import com.taekyeong.tkgram.service.user.UserPutInfoService;
+import com.taekyeong.tkgram.service.user.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +20,7 @@ public class UserController {
     private final UserLoginService userLoginService;
     private final UserInfoService userInfoService;
     private final UserPutInfoService userPutInfoService;
+    private final UserFeedInfoService userFeedInfoService;
 
     @ApiOperation(value = "회원가입")
     @PostMapping("/api/v1/join")
@@ -56,6 +54,12 @@ public class UserController {
             token = token.substring("Bearer ".length());
             return ResponseEntity.status(HttpStatus.OK).body(userInfoService.getUserInfo(token));
         }
+    }
+
+    @GetMapping("/api/v1/user/{id}/feed/{count}/{start}")
+    public ResponseEntity<UserDto.ResponseFeedInfo> getUserFeedInfo(HttpServletRequest request, @PathVariable("id") Long user,
+                                                                    @PathVariable("count") Integer count, @PathVariable("start") Long start) {
+        return ResponseEntity.status(HttpStatus.OK).body(userFeedInfoService.getUserFeedInfo(user, count, start));
     }
 
     @ApiOperation(value = "내 정보 수정하기")

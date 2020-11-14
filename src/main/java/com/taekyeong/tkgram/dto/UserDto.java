@@ -2,10 +2,13 @@ package com.taekyeong.tkgram.dto;
 
 import com.taekyeong.tkgram.entity.Post;
 import com.taekyeong.tkgram.entity.User;
+import com.taekyeong.tkgram.object.FeedItem;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor
@@ -103,6 +106,18 @@ public class UserDto {
             this.user = user;
             this.token = token;
             this.expireTime = expireTime;
+        }
+    }
+
+    @Setter
+    @Getter
+    @NoArgsConstructor
+    public static class ResponseFeedInfo {
+        private List<FeedItem> feedItems = new ArrayList<>();
+
+        @Builder
+        public ResponseFeedInfo(List<FeedItem> feedItems) {
+            this.feedItems = feedItems;
         }
     }
 }
