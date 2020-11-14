@@ -34,6 +34,12 @@ public class User {
     @OrderBy("createdTime desc")
     private List<Post> posts;
 
+    @OneToMany(mappedBy = "to")
+    private List<Follow> followers;
+
+    @OneToMany(mappedBy = "from")
+    private List<Follow> followees;
+
     @Builder
     public User(String email, String username, String password, String profile) {
         this.email = email;
