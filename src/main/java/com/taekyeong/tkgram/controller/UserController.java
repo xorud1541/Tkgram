@@ -51,8 +51,7 @@ public class UserController {
         if(token == null)
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(UserDto.ResponseUserInfo.builder().build());
         else {
-            token = token.substring("Bearer ".length());
-            return ResponseEntity.status(HttpStatus.OK).body(userInfoService.getUserInfo(token));
+            return ResponseEntity.status(HttpStatus.OK).body(userInfoService.getUserInfo(user));
         }
     }
 
