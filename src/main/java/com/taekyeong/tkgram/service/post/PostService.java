@@ -2,6 +2,8 @@ package com.taekyeong.tkgram.service.post;
 
 import com.taekyeong.tkgram.dto.PostDto;
 import com.taekyeong.tkgram.dto.PhotoDto;
+import com.taekyeong.tkgram.dto.RedisDto;
+import com.taekyeong.tkgram.entity.Follow;
 import com.taekyeong.tkgram.entity.Photo;
 import com.taekyeong.tkgram.entity.Post;
 import com.taekyeong.tkgram.entity.User;
@@ -10,6 +12,8 @@ import com.taekyeong.tkgram.repository.UserRepository;
 import com.taekyeong.tkgram.util.Base64ToMultipartFile;
 import com.taekyeong.tkgram.util.S3Uploader;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -29,6 +33,9 @@ public class PostService {
     private final UserRepository userRepository;
     private final PhotoService photoService;
     private final S3Uploader s3Uploader;
+
+    @Autowired
+    RedisTemplate<String, Object> redisTemplate;
 
     @Transactional
     public Long savePost(PostDto.RequestAddPost requestAddPost, Long userIdx) {
@@ -64,7 +71,22 @@ public class PostService {
                     postDto.setPhotos(photoList);
                     postDto.setThumbnail(thumbnailUrl); // 게시물 썸네일 주소
 
-                    return postRepository.save(postDto.toEntity()).getPost();
+                    Post post = postRepository.save(postDto.toEntity());
+
+                    for(Follow follow : post.getPoster().getFollowers()) {
+                        RedisDto redisDto = new RedisDto();
+                        redisDto.setDescription(postDto.getDescription());
+                        redisDto.setPoster(postDto.getPoster().getUser());
+                        redisDto.setCreatedTime(postDto.getCreatedTime());
+                        redisDto.setThumbnail(postDto.getThumbnail());
+                        redisDto.setPhotos(postDto.getPhotos());
+                        redisTemplate.opsForList().leftPush(String.valueOf(follow.getFrom().getUser()),
+                                redisDto);
+                    }
+
+                    RedisDto redisDto = (RedisDto)redisTemplate.opsForList().index(String.valueOf(67), 0);
+                    System.out.println(redisDto.getPoster());
+                    return post.getPost();
                 }
                 else
                     return 0L;
