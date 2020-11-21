@@ -74,18 +74,17 @@ public class PostService {
                     Post post = postRepository.save(postDto.toEntity());
 
                     for(Follow follow : post.getPoster().getFollowers()) {
-                        RedisDto redisDto = new RedisDto();
-                        redisDto.setDescription(postDto.getDescription());
-                        redisDto.setPoster(postDto.getPoster().getUser());
-                        redisDto.setCreatedTime(postDto.getCreatedTime());
-                        redisDto.setThumbnail(postDto.getThumbnail());
-                        redisDto.setPhotos(postDto.getPhotos());
+                        PostDto.TimelinePostInfo timelinePostInfo = new PostDto.TimelinePostInfo();
+                        timelinePostInfo.setUser(post.getPoster().getUser());
+                        timelinePostInfo.setUsername(post.getPoster().getUsername());
+                        timelinePostInfo.setCreatedTime(post.getCreatedTime());
+                        timelinePostInfo.setPhotos(post.getPhotos());
+                        timelinePostInfo.setDescription(post.getDescription());
+
                         redisTemplate.opsForList().leftPush(String.valueOf(follow.getFrom().getUser()),
-                                redisDto);
+                                timelinePostInfo);
                     }
 
-                    RedisDto redisDto = (RedisDto)redisTemplate.opsForList().index(String.valueOf(67), 0);
-                    System.out.println(redisDto.getPoster());
                     return post.getPost();
                 }
                 else

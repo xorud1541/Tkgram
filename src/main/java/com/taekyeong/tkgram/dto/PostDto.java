@@ -71,4 +71,38 @@ public class PostDto {
             this.thumbnail = thumbnail;
         }
     }
+
+    // Get Response
+    @Setter
+    @Getter
+    @NoArgsConstructor
+    public static class ResponseTimelinePosts {
+        private List<ResponsePostInfo> timelineInfos;
+
+        @Builder
+        public ResponseTimelinePosts(List<ResponsePostInfo> timelineInfos) {
+            this.timelineInfos = timelineInfos;
+        }
+    }
+
+    @Setter
+    @Getter
+    @NoArgsConstructor
+    public static class TimelinePostInfo {
+        private Long user;
+        private String username;
+        private Long createdTime;
+        private List<Photo> photos;
+        private String description;
+
+        @Builder
+        public TimelinePostInfo(Long user, String username, Long createdTime,
+                                    List<Photo> photos, String description) {
+            this.user = user;
+            this.username = username;
+            this.createdTime = createdTime;
+            this.photos = photos;
+            this.description = description;
+        }
+    }
 }
