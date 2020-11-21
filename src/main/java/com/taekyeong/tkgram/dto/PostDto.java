@@ -77,11 +77,11 @@ public class PostDto {
     @Getter
     @NoArgsConstructor
     public static class ResponseTimelinePosts {
-        private List<ResponsePostInfo> timelineInfos;
+        private List<TimelinePostInfo> timeline;
 
         @Builder
-        public ResponseTimelinePosts(List<ResponsePostInfo> timelineInfos) {
-            this.timelineInfos = timelineInfos;
+        public ResponseTimelinePosts(List<TimelinePostInfo> timeline) {
+            this.timeline = timeline;
         }
     }
 

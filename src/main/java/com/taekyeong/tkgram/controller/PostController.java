@@ -1,6 +1,7 @@
 package com.taekyeong.tkgram.controller;
 
 import com.taekyeong.tkgram.dto.PostDto;
+import com.taekyeong.tkgram.entity.Post;
 import com.taekyeong.tkgram.service.post.PostService;
 import com.taekyeong.tkgram.util.JwtTokenProvider;
 import io.swagger.annotations.Api;
@@ -25,7 +26,7 @@ public class PostController {
 
     @ApiOperation(value = "게시물 등록하기")
     @PostMapping("/api/v1/post")
-    public ResponseEntity savePost(HttpServletRequest request, @RequestBody PostDto.RequestAddPost requestAddPost) {
+    public ResponseEntity<?> savePost(HttpServletRequest request, @RequestBody PostDto.RequestAddPost requestAddPost) {
         String token = request.getHeader("Authorization").substring("Bearer ".length());
         if(token.length() == 0)
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("");
@@ -42,6 +43,20 @@ public class PostController {
     @GetMapping("/api/v1/post/{id}")
     public PostDto.ResponsePostInfo getPost(@PathVariable("id") Long post) {
         return postService.getPost(post);
+    }
+
+    @GetMapping("/api/v1/timeline/{count}/{start}")
+    public ResponseEntity<?> getTimeline(HttpServletRequest request,
+                                         @PathVariable("count") int count,
+                                         @PathVariable("start") int start,
+                                         @RequestParam int type) {
+        String token = request.getHeader("Authorization").substring("Bearer ".length());
+        if(token.length() == 0)
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("");
+
+        Long user = jwtTokenProvider.getUserindex(token);
+
+        return ResponseEntity.status(HttpStatus.OK).body(postService.getTimeline(user, count, start, type));
     }
 
     @ApiOperation(value = "게시물 삭제하기")

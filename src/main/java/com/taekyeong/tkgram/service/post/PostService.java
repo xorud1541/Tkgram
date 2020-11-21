@@ -2,7 +2,6 @@ package com.taekyeong.tkgram.service.post;
 
 import com.taekyeong.tkgram.dto.PostDto;
 import com.taekyeong.tkgram.dto.PhotoDto;
-import com.taekyeong.tkgram.dto.RedisDto;
 import com.taekyeong.tkgram.entity.Follow;
 import com.taekyeong.tkgram.entity.Photo;
 import com.taekyeong.tkgram.entity.Post;
@@ -20,10 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @RequiredArgsConstructor
 @Service
@@ -33,9 +29,7 @@ public class PostService {
     private final UserRepository userRepository;
     private final PhotoService photoService;
     private final S3Uploader s3Uploader;
-
-    @Autowired
-    RedisTemplate<String, Object> redisTemplate;
+    private final RedisTemplate<String, Number> timeline;
 
     @Transactional
     public Long savePost(PostDto.RequestAddPost requestAddPost, Long userIdx) {
@@ -74,15 +68,10 @@ public class PostService {
                     Post post = postRepository.save(postDto.toEntity());
 
                     for(Follow follow : post.getPoster().getFollowers()) {
-                        PostDto.TimelinePostInfo timelinePostInfo = new PostDto.TimelinePostInfo();
-                        timelinePostInfo.setUser(post.getPoster().getUser());
-                        timelinePostInfo.setUsername(post.getPoster().getUsername());
-                        timelinePostInfo.setCreatedTime(post.getCreatedTime());
-                        timelinePostInfo.setPhotos(post.getPhotos());
-                        timelinePostInfo.setDescription(post.getDescription());
-
-                        redisTemplate.opsForList().leftPush(String.valueOf(follow.getFrom().getUser()),
-                                timelinePostInfo);
+                        timeline.opsForList().leftPush(
+                                String.valueOf(follow.getFrom().getUser()), /* 내 팔로우 */
+                                post.getPost() /* 게시글 번호 */
+                        );
                     }
 
                     return post.getPost();
@@ -107,6 +96,31 @@ public class PostService {
                 .poster(post.getPoster().getUser())
                 .description(post.getDescription())
                 .thumbnail(post.getThumbnail())
+                .build();
+    }
+
+    @Transactional
+    public PostDto.ResponseTimelinePosts getTimeline(Long user, int count, int start, int type) {
+        List<PostDto.TimelinePostInfo> timelinePostInfoList = new ArrayList<>();
+        int len = Objects.requireNonNull(timeline.opsForList().size(String.valueOf(user))).intValue();
+        for(long idx = 0; idx < len; idx++) {
+            Long post = Long.valueOf(Objects.requireNonNull(timeline.opsForList().index(String.valueOf(user.longValue()), idx)).toString());
+
+            Optional<Post> optionalPost = postRepository.findById(post);
+            if(optionalPost.isPresent()) {
+                Post postInfo = optionalPost.get();
+                timelinePostInfoList.add(PostDto.TimelinePostInfo.builder()
+                        .user(postInfo.getPoster().getUser())
+                        .username(postInfo.getPoster().getUsername())
+                        .createdTime(postInfo.getCreatedTime())
+                        .photos(postInfo.getPhotos())
+                        .description(postInfo.getDescription())
+                        .build());
+            }
+        }
+
+        return PostDto.ResponseTimelinePosts.builder()
+                .timeline(timelinePostInfoList)
                 .build();
     }
 
