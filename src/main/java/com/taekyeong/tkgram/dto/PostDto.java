@@ -20,7 +20,8 @@ public class PostDto {
     private String thumbnail;
     private List<Photo> photos;
 
-    @Builder PostDto(String description, User poster, Long createdTime, List<Photo> photos, String thumbnail) {
+    @Builder
+    public PostDto(String description, User poster, Long createdTime, List<Photo> photos, String thumbnail) {
         this.description = description;
         this.poster = poster;
         this.createdTime = createdTime;
@@ -91,15 +92,17 @@ public class PostDto {
     public static class TimelinePostInfo {
         private Long user;
         private String username;
+        private Long post;
         private Long createdTime;
         private List<Photo> photos;
         private String description;
 
         @Builder
-        public TimelinePostInfo(Long user, String username, Long createdTime,
-                                    List<Photo> photos, String description) {
+        public TimelinePostInfo(Long user, String username,
+                                Long post, Long createdTime, List<Photo> photos, String description) {
             this.user = user;
             this.username = username;
+            this.post = post;
             this.createdTime = createdTime;
             this.photos = photos;
             this.description = description;

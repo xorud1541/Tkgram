@@ -100,22 +100,77 @@ public class PostService {
     }
 
     @Transactional
-    public PostDto.ResponseTimelinePosts getTimeline(Long user, int count, int start, int type) {
+    public PostDto.ResponseTimelinePosts getTimeline(Long user, int count, Long start, int type) {
         List<PostDto.TimelinePostInfo> timelinePostInfoList = new ArrayList<>();
         int len = Objects.requireNonNull(timeline.opsForList().size(String.valueOf(user))).intValue();
-        for(long idx = 0; idx < len; idx++) {
-            Long post = Long.valueOf(Objects.requireNonNull(timeline.opsForList().index(String.valueOf(user.longValue()), idx)).toString());
 
-            Optional<Post> optionalPost = postRepository.findById(post);
-            if(optionalPost.isPresent()) {
-                Post postInfo = optionalPost.get();
-                timelinePostInfoList.add(PostDto.TimelinePostInfo.builder()
-                        .user(postInfo.getPoster().getUser())
-                        .username(postInfo.getPoster().getUsername())
-                        .createdTime(postInfo.getCreatedTime())
-                        .photos(postInfo.getPhotos())
-                        .description(postInfo.getDescription())
-                        .build());
+        if(type == 0) {
+            // 현재 리스트
+            long idx = 0;
+            while (timelinePostInfoList.size() < count && idx < len) {
+                Long post = Long.valueOf(Objects.requireNonNull(timeline.opsForList().index(String.valueOf(user.longValue()), idx)).toString());
+                Optional<Post> optionalPost = postRepository.findById(post);
+                if (optionalPost.isPresent()) {
+                    Post postInfo = optionalPost.get();
+                    timelinePostInfoList.add(PostDto.TimelinePostInfo.builder()
+                            .user(postInfo.getPoster().getUser())
+                            .username(postInfo.getPoster().getUsername())
+                            .post(post)
+                            .createdTime(postInfo.getCreatedTime())
+                            .photos(postInfo.getPhotos())
+                            .description(postInfo.getDescription())
+                            .build());
+                }
+                idx++;
+            }
+        }
+        else if(type == 1) {
+            // 최신 리스트
+            for(long idx = 0; idx < len; idx++) {
+                if(timelinePostInfoList.size() < count) {
+                    Long post = Long.valueOf(Objects.requireNonNull(timeline.opsForList().index(String.valueOf(user.longValue()), idx)).toString());
+                    Optional<Post> optionalPost = postRepository.findById(post);
+                    if (optionalPost.isPresent()) {
+                        if(post.equals(start))
+                            break;
+
+                        Post postInfo = optionalPost.get();
+                        timelinePostInfoList.add(PostDto.TimelinePostInfo.builder()
+                                .user(postInfo.getPoster().getUser())
+                                .username(postInfo.getPoster().getUsername())
+                                .post(post)
+                                .createdTime(postInfo.getCreatedTime())
+                                .photos(postInfo.getPhotos())
+                                .description(postInfo.getDescription())
+                                .build());
+
+                        if(timelinePostInfoList.size() > count)
+                            timelinePostInfoList.remove(0);
+                    }
+                }
+            }
+        }
+        else if(type == 2){
+            // 과거 리스트
+            for(long idx = 0; idx < len; idx++) {
+                Long post = Long.valueOf(Objects.requireNonNull(timeline.opsForList().index(String.valueOf(user.longValue()), idx)).toString());
+                if(post > start) {
+                    Optional<Post> optionalPost = postRepository.findById(post);
+                    if (optionalPost.isPresent()) {
+                        Post postInfo = optionalPost.get();
+                        timelinePostInfoList.add(PostDto.TimelinePostInfo.builder()
+                                .user(postInfo.getPoster().getUser())
+                                .username(postInfo.getPoster().getUsername())
+                                .post(post)
+                                .createdTime(postInfo.getCreatedTime())
+                                .photos(postInfo.getPhotos())
+                                .description(postInfo.getDescription())
+                                .build());
+                    }
+                }
+
+                if(timelinePostInfoList.size() > count)
+                    break;
             }
         }
 

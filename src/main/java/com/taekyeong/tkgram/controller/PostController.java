@@ -48,7 +48,7 @@ public class PostController {
     @GetMapping("/api/v1/timeline/{count}/{start}")
     public ResponseEntity<?> getTimeline(HttpServletRequest request,
                                          @PathVariable("count") int count,
-                                         @PathVariable("start") int start,
+                                         @PathVariable("start") Long start,
                                          @RequestParam int type) {
         String token = request.getHeader("Authorization").substring("Bearer ".length());
         if(token.length() == 0)
