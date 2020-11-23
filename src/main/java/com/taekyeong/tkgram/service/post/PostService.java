@@ -6,12 +6,12 @@ import com.taekyeong.tkgram.entity.Follow;
 import com.taekyeong.tkgram.entity.Photo;
 import com.taekyeong.tkgram.entity.Post;
 import com.taekyeong.tkgram.entity.User;
+import com.taekyeong.tkgram.repository.FollowRepository;
 import com.taekyeong.tkgram.repository.PostRepository;
 import com.taekyeong.tkgram.repository.UserRepository;
 import com.taekyeong.tkgram.util.Base64ToMultipartFile;
 import com.taekyeong.tkgram.util.S3Uploader;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,6 +27,7 @@ public class PostService {
 
     private final PostRepository postRepository;
     private final UserRepository userRepository;
+    private final FollowRepository followRepository;
     private final PhotoService photoService;
     private final S3Uploader s3Uploader;
     private final RedisTemplate<String, Number> timeline;
@@ -112,14 +113,22 @@ public class PostService {
                 Optional<Post> optionalPost = postRepository.findById(post);
                 if (optionalPost.isPresent()) {
                     Post postInfo = optionalPost.get();
-                    timelinePostInfoList.add(PostDto.TimelinePostInfo.builder()
-                            .user(postInfo.getPoster().getUser())
-                            .username(postInfo.getPoster().getUsername())
-                            .post(post)
-                            .createdTime(postInfo.getCreatedTime())
-                            .photos(postInfo.getPhotos())
-                            .description(postInfo.getDescription())
-                            .build());
+
+                    // 팔로잉하는지 체크
+                    User userInfo = userRepository.getOne(user);
+                    if(!followRepository.findByFromAndTo(userInfo, postInfo.getPoster()).isPresent()) {
+                        timeline.opsForList().remove(String.valueOf(user.longValue()), 1, post);
+                    }
+                    else {
+                        timelinePostInfoList.add(PostDto.TimelinePostInfo.builder()
+                                .user(postInfo.getPoster().getUser())
+                                .username(postInfo.getPoster().getUsername())
+                                .post(post)
+                                .createdTime(postInfo.getCreatedTime())
+                                .photos(postInfo.getPhotos())
+                                .description(postInfo.getDescription())
+                                .build());
+                    }
                 }
                 idx++;
             }
@@ -135,14 +144,21 @@ public class PostService {
                             break;
 
                         Post postInfo = optionalPost.get();
-                        timelinePostInfoList.add(PostDto.TimelinePostInfo.builder()
-                                .user(postInfo.getPoster().getUser())
-                                .username(postInfo.getPoster().getUsername())
-                                .post(post)
-                                .createdTime(postInfo.getCreatedTime())
-                                .photos(postInfo.getPhotos())
-                                .description(postInfo.getDescription())
-                                .build());
+                        // 팔로잉하는지 체크
+                        User userInfo = userRepository.getOne(user);
+                        if(!followRepository.findByFromAndTo(userInfo, postInfo.getPoster()).isPresent()) {
+                            timeline.opsForList().remove(String.valueOf(user.longValue()), 1, post);
+                        }
+                        else {
+                            timelinePostInfoList.add(PostDto.TimelinePostInfo.builder()
+                                    .user(postInfo.getPoster().getUser())
+                                    .username(postInfo.getPoster().getUsername())
+                                    .post(post)
+                                    .createdTime(postInfo.getCreatedTime())
+                                    .photos(postInfo.getPhotos())
+                                    .description(postInfo.getDescription())
+                                    .build());
+                        }
 
                         if(timelinePostInfoList.size() > count)
                             timelinePostInfoList.remove(0);
@@ -158,14 +174,22 @@ public class PostService {
                     Optional<Post> optionalPost = postRepository.findById(post);
                     if (optionalPost.isPresent()) {
                         Post postInfo = optionalPost.get();
-                        timelinePostInfoList.add(PostDto.TimelinePostInfo.builder()
-                                .user(postInfo.getPoster().getUser())
-                                .username(postInfo.getPoster().getUsername())
-                                .post(post)
-                                .createdTime(postInfo.getCreatedTime())
-                                .photos(postInfo.getPhotos())
-                                .description(postInfo.getDescription())
-                                .build());
+
+                        // 팔로잉하는지 체크
+                        User userInfo = userRepository.getOne(user);
+                        if(!followRepository.findByFromAndTo(userInfo, postInfo.getPoster()).isPresent()) {
+                            timeline.opsForList().remove(String.valueOf(user.longValue()), 1, post);
+                        }
+                        else {
+                            timelinePostInfoList.add(PostDto.TimelinePostInfo.builder()
+                                    .user(postInfo.getPoster().getUser())
+                                    .username(postInfo.getPoster().getUsername())
+                                    .post(post)
+                                    .createdTime(postInfo.getCreatedTime())
+                                    .photos(postInfo.getPhotos())
+                                    .description(postInfo.getDescription())
+                                    .build());
+                        }
                     }
                 }
 
