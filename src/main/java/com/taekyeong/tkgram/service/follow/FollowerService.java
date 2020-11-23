@@ -39,4 +39,25 @@ public class FollowerService {
             return HttpStatus.BAD_REQUEST;
         }
     }
+
+    @Transactional
+    public HttpStatus unfollowUser(Long fromUser, Long toUser) {
+        Optional<User> fromOptional = userRepository.findById(fromUser);
+        Optional<User> toOptional = userRepository.findById(toUser);
+
+        if(!fromOptional.isPresent() || !toOptional.isPresent())
+            return HttpStatus.BAD_REQUEST;
+
+        User fromUserInfo = fromOptional.get();
+        User toUserInfo = toOptional.get();
+
+        Optional<Follow> optional = followRepository.findByFromAndTo(fromUserInfo, toUserInfo);
+        if(optional.isPresent()) {
+            followRepository.delete(optional.get());
+            return HttpStatus.OK;
+        }
+        else {
+            return HttpStatus.BAD_REQUEST;
+        }
+    }
 }
