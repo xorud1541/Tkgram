@@ -104,7 +104,35 @@ public class PostService {
     public PostDto.ResponseTimelinePosts getTimeline(Long user, int count, Long start, int type) {
         List<PostDto.TimelinePostInfo> timelinePostInfoList = new ArrayList<>();
         int len = Objects.requireNonNull(timeline.opsForList().size(String.valueOf(user))).intValue();
+        if(len == 0) {
+            Optional<User> optionalUser = userRepository.findById(user);
+            if(optionalUser.isPresent()) {
+                User userInfo = optionalUser.get();
+                List<Follow> follows = followRepository.findByFrom(userInfo);
+                for(Follow follow : follows) {
+                    User followee = follow.getTo();
+                    for(Post post : followee.getPosts()) {
+                        timelinePostInfoList.add(PostDto.TimelinePostInfo.builder()
+                                .user(followee.getUser())
+                                .username(followee.getUsername())
+                                .post(post.getPost())
+                                .createdTime(post.getCreatedTime())
+                                .photos(post.getPhotos())
+                                .description(post.getDescription()).build());
+                    }
+                }
 
+                Collections.sort(timelinePostInfoList);
+                for(PostDto.TimelinePostInfo postInfo : timelinePostInfoList) {
+                    timeline.opsForList().rightPush(
+                            String.valueOf(user), /* 나 */
+                            postInfo.getPost()); /* 게시글 번호 */
+                }
+                timelinePostInfoList.clear();
+            }
+        }
+
+        len = Objects.requireNonNull(timeline.opsForList().size(String.valueOf(user))).intValue();
         if(type == 0) {
             // 현재 리스트
             long idx = 0;
@@ -170,7 +198,7 @@ public class PostService {
             // 과거 리스트
             for(long idx = 0; idx < len; idx++) {
                 Long post = Long.valueOf(Objects.requireNonNull(timeline.opsForList().index(String.valueOf(user.longValue()), idx)).toString());
-                if(post > start) {
+                if(post < start) {
                     Optional<Post> optionalPost = postRepository.findById(post);
                     if (optionalPost.isPresent()) {
                         Post postInfo = optionalPost.get();

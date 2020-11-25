@@ -89,7 +89,7 @@ public class PostDto {
     @Setter
     @Getter
     @NoArgsConstructor
-    public static class TimelinePostInfo {
+    public static class TimelinePostInfo implements Comparable<TimelinePostInfo>{
         private Long user;
         private String username;
         private Long post;
@@ -106,6 +106,16 @@ public class PostDto {
             this.createdTime = createdTime;
             this.photos = photos;
             this.description = description;
+        }
+
+        @Override
+        public int compareTo(TimelinePostInfo timelinePostInfo) {
+            if(this.createdTime < timelinePostInfo.getCreatedTime())
+                return 1;
+            else if(this.createdTime > timelinePostInfo.getCreatedTime())
+                return -1;
+            else
+                return 0;
         }
     }
 }
