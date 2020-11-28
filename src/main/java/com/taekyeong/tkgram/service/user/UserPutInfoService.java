@@ -26,25 +26,24 @@ public class UserPutInfoService {
     private final S3Uploader s3Uploader;
 
     @Transactional
-    public HttpStatus putUserInfo(String token, UserDto.RequestPutUserInfo requestPutUserInfo) {
-        Long userIdx = jwtTokenProvider.getUserindex(token);
-        Optional<User> optional = userRepository.findById(userIdx);
+    public HttpStatus putUserInfo(Long user, UserDto.RequestPutUserInfo requestPutUserInfo) {
+        Optional<User> optional = userRepository.findById(user);
 
         if(optional.isPresent())
         {
-            User user = optional.get();
+            User userInfo = optional.get();
 
             // Put Username
-            String currentUsername = user.getUsername();
+            String currentUsername = userInfo.getUsername();
             String nextUsername = requestPutUserInfo.getUsername();
 
             if(nextUsername != null && !currentUsername.equals(nextUsername))
             {
-                user.setUsername(nextUsername);
+                userInfo.setUsername(nextUsername);
             }
 
             // Put Profile Url
-            String currentProfileUrl = user.getProfile();
+            String currentProfileUrl = userInfo.getProfile();
             String nextProfileUrl = null;
             String profileEditType = requestPutUserInfo.getProfile_edit_type();
 
@@ -95,8 +94,8 @@ public class UserPutInfoService {
                 nextProfileUrl = currentProfileUrl;
             }
 
-            user.setProfile(nextProfileUrl);
-            userRepository.save(user);
+            userInfo.setProfile(nextProfileUrl);
+            userRepository.save(userInfo);
 
             return HttpStatus.OK;
         }

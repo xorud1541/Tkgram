@@ -11,8 +11,8 @@ import java.util.Date;
 
 @Component
 public class JwtTokenProvider {
-    private String secretKey;
-    private long validityInMilliseconds;
+    private final String secretKey;
+    private final long validityInMilliseconds;
 
     public JwtTokenProvider(
             @Value("${jwt.secret}") String secretKey,
@@ -42,8 +42,13 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-    public Long getUserindex(String token) {
-        Jws<Claims> claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
-        return Long.parseLong(claims.getBody().getSubject());
+    public Long getUserIndex(String token) {
+        try {
+            Jws<Claims> claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
+            return Long.parseLong(claims.getBody().getSubject());
+        }
+        catch (Exception e) {
+            return 0L;
+        }
     }
 }

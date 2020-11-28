@@ -16,15 +16,15 @@ public class FollowController {
 
     @PostMapping("/api/v1/follow/{id}")
     public HttpStatus followUser(HttpServletRequest request, @PathVariable("id") Long toUser) {
-        String token = request.getHeader("Authorization");
-        Long fromUser = jwtTokenProvider.getUserindex(token.substring("Bearer ".length()));
+        String token = request.getHeader("Authorization").substring("Bearer ".length());
+        Long fromUser = jwtTokenProvider.getUserIndex(token);
         return followService.followUser(fromUser, toUser);
     }
 
     @DeleteMapping("/api/v1/follow/{id}")
     public HttpStatus unfollowUser(HttpServletRequest request, @PathVariable("id") Long toUser) {
-        String token = request.getHeader("Authorization");
-        Long fromUser = jwtTokenProvider.getUserindex(token.substring("Bearer ".length()));
+        String token = request.getHeader("Authorization").substring("Bearer ".length());
+        Long fromUser = jwtTokenProvider.getUserIndex(token);
         return followService.unfollowUser(fromUser, toUser);
     }
 }

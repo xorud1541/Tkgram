@@ -20,10 +20,7 @@ public class PostController {
     @PostMapping("/api/v1/post")
     public ResponseEntity<Long> savePost(HttpServletRequest request, @RequestBody PostDto.RequestAddPost requestAddPost) {
         String token = request.getHeader("Authorization").substring("Bearer ".length());
-        if(token.length() == 0)
-            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
-
-        Long poster = jwtTokenProvider.getUserindex(token);
+        Long poster = jwtTokenProvider.getUserIndex(token);
         Long postNum = postService.savePost(requestAddPost, poster);
         if(postNum > 0)
             return ResponseEntity.status(HttpStatus.OK).body(postNum);
@@ -42,11 +39,7 @@ public class PostController {
                                          @PathVariable("start") Long start,
                                          @RequestParam int type) {
         String token = request.getHeader("Authorization").substring("Bearer ".length());
-        if(token.length() == 0)
-            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
-
-        Long user = jwtTokenProvider.getUserindex(token);
-
+        Long user = jwtTokenProvider.getUserIndex(token);
         return ResponseEntity.status(HttpStatus.OK).body(postService.getTimeline(user, count, start, type));
     }
 
@@ -59,12 +52,10 @@ public class PostController {
     @PutMapping("/api/v1/post/{id}")
     public HttpStatus putPost(HttpServletRequest request, @PathVariable("id") Long post, @RequestBody Map<String, String> putObject) {
         String token = request.getHeader("Authorization").substring("Bearer ".length());
-        if(token.length() == 0)
-            return HttpStatus.NOT_ACCEPTABLE;
-        else if(putObject.isEmpty() || putObject.get("description").length() == 0)
+        if(putObject.isEmpty() || putObject.get("description").length() == 0)
             return HttpStatus.BAD_REQUEST;
         else {
-            Long userIdx = jwtTokenProvider.getUserindex(token);
+            Long userIdx = jwtTokenProvider.getUserIndex(token);
             if(postService.putPost(post, userIdx, putObject.get("description")))
                 return HttpStatus.OK;
             else
