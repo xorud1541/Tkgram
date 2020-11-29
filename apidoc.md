@@ -39,11 +39,11 @@
 | secretKey | String | secret key |
 
 ### Response(200)
-| key | type |
-|---|:---:|
-| user | Long |
-| token | String |
-| expireTime | Long |
+| key | type | description |
+|---|:---:|:---:|
+| user | Long | 유저 정보(PK) |
+| token | String | access token |
+| expireTime | Long | access token 만료시간 |
 
 ---
 ## 유저 정보
