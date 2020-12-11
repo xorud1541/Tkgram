@@ -27,7 +27,7 @@ public class UserFeedInfoService {
             for(Post post : userInfo.getPosts()) {
                 FeedItem feedItem = new FeedItem();
 
-                if(startFeed < post.getPost()) {
+                if(startFeed == null || startFeed > post.getPost()) {
                     feedItem.setPost(post.getPost());
                     feedItem.setThumbnail(post.getThumbnail());
 

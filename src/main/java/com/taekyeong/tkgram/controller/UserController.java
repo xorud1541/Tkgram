@@ -52,15 +52,15 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(userInfoService.getUserInfo(myUserIdx, user));
     }
 
-    @GetMapping("/api/v1/user/{id}/feed/{count}/{start}")
+    @GetMapping("/api/v1/user/{id}/feed/{count}")
     public ResponseEntity<UserDto.ResponseFeedInfo> getUserFeedInfo(HttpServletRequest request, @PathVariable("id") Long user,
-                                                                    @PathVariable("count") Integer count, @PathVariable("start") Long start) {
+                                                                    @PathVariable("count") Integer count, @RequestParam(required = false) Long start) {
         return ResponseEntity.status(HttpStatus.OK).body(userFeedInfoService.getUserFeedInfo(user, count, start));
     }
 
-    @GetMapping("/api/v1/user/{id}/posts/{count}/{start}")
+    @GetMapping("/api/v1/user/{id}/posts/{count}")
     public ResponseEntity<PostDto.ResponsePostInfos> getUserPostInfos(HttpServletRequest request, @PathVariable("id") Long user,
-                                                                      @PathVariable("count") Integer count, @PathVariable("start") Long start) {
+                                                                      @PathVariable("count") Integer count, @RequestParam(required = false) Long start) {
         return ResponseEntity.status(HttpStatus.OK).body(postService.getUserPosts(user, count, start));
     }
 

@@ -101,14 +101,14 @@ public class PostService {
                 .build();
     }
 
-    public PostDto.ResponsePostInfos getUserPosts(Long user, Integer count, Long start) {
+    public PostDto.ResponsePostInfos getUserPosts(Long user, Integer count, Long startPost) {
         Optional<User> optionalUser = userRepository.findById(user);
         if(optionalUser.isPresent()) {
             User userInfo = optionalUser.get();
             List<PostDto.ResponsePostInfo> postInfos = new ArrayList<>();
 
             for(Post post : userInfo.getPosts()) {
-                if(start >= post.getPost()) {
+                if(startPost == null || startPost > post.getPost()) {
                     postInfos.add(getPost(post.getPost()));
                     if(postInfos.size() == count)
                         break;
