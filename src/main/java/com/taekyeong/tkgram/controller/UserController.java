@@ -1,6 +1,8 @@
 package com.taekyeong.tkgram.controller;
 
+import com.taekyeong.tkgram.dto.PostDto;
 import com.taekyeong.tkgram.dto.UserDto;
+import com.taekyeong.tkgram.service.post.PostService;
 import com.taekyeong.tkgram.service.user.*;
 import com.taekyeong.tkgram.util.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +21,9 @@ public class UserController {
     private final UserInfoService userInfoService;
     private final UserPutInfoService userPutInfoService;
     private final UserFeedInfoService userFeedInfoService;
+
+    private final PostService postService;
+
     private final JwtTokenProvider jwtTokenProvider;
 
     @PostMapping("/api/join")
@@ -51,6 +56,12 @@ public class UserController {
     public ResponseEntity<UserDto.ResponseFeedInfo> getUserFeedInfo(HttpServletRequest request, @PathVariable("id") Long user,
                                                                     @PathVariable("count") Integer count, @PathVariable("start") Long start) {
         return ResponseEntity.status(HttpStatus.OK).body(userFeedInfoService.getUserFeedInfo(user, count, start));
+    }
+
+    @GetMapping("/api/v1/user/{id}/posts/{count}/{start}")
+    public ResponseEntity<PostDto.ResponsePostInfos> getUserPostInfos(HttpServletRequest request, @PathVariable("id") Long user,
+                                                                      @PathVariable("count") Integer count, @PathVariable("start") Long start) {
+        return ResponseEntity.status(HttpStatus.OK).body(postService.getUserPosts(user, count, start));
     }
 
     @PutMapping("/api/v1/user/my")

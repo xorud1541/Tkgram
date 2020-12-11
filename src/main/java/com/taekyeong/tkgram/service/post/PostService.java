@@ -93,11 +93,35 @@ public class PostService {
     public PostDto.ResponsePostInfo getPost(Long idx) {
         Post post = postRepository.findById(idx).get();
         return PostDto.ResponsePostInfo.builder()
+                .post(post.getPost())
                 .photos(post.getPhotos())
                 .poster(post.getPoster().getUser())
                 .description(post.getDescription())
                 .thumbnail(post.getThumbnail())
                 .build();
+    }
+
+    public PostDto.ResponsePostInfos getUserPosts(Long user, Integer count, Long start) {
+        Optional<User> optionalUser = userRepository.findById(user);
+        if(optionalUser.isPresent()) {
+            User userInfo = optionalUser.get();
+            List<PostDto.ResponsePostInfo> postInfos = new ArrayList<>();
+
+            for(Post post : userInfo.getPosts()) {
+                if(start >= post.getPost()) {
+                    postInfos.add(getPost(post.getPost()));
+                    if(postInfos.size() == count)
+                        break;
+                }
+            }
+
+            if(postInfos.isEmpty())
+                return null;
+            else
+                return PostDto.ResponsePostInfos.builder().postInfos(postInfos).build();
+        }
+        else
+            return null;
     }
 
     @Transactional

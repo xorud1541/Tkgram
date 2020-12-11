@@ -59,13 +59,15 @@ public class PostDto {
     @Getter
     @NoArgsConstructor
     public static class ResponsePostInfo {
+        private Long post;
         private List<Photo> photos;
         private Long poster;
         private String description;
         private String thumbnail;
 
         @Builder
-        public ResponsePostInfo(List<Photo> photos, Long poster, String description, String thumbnail) {
+        public ResponsePostInfo(Long post, List<Photo> photos, Long poster, String description, String thumbnail) {
+            this.post = post;
             this.photos = photos;
             this.poster = poster;
             this.description = description;
@@ -74,6 +76,18 @@ public class PostDto {
     }
 
     // Get Response
+    @Setter
+    @Getter
+    @NoArgsConstructor
+    public static class ResponsePostInfos {
+        private List<ResponsePostInfo> postInfos;
+
+        @Builder
+        public ResponsePostInfos(List<ResponsePostInfo> postInfos) {
+            this.postInfos = postInfos;
+        }
+    }
+
     @Setter
     @Getter
     @NoArgsConstructor
