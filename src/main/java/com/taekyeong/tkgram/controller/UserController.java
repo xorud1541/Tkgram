@@ -9,7 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 @RequiredArgsConstructor
@@ -53,15 +53,28 @@ public class UserController {
     }
 
     @GetMapping("/api/v1/user/{id}/feed/{count}")
-    public ResponseEntity<UserDto.ResponseFeedInfo> getUserFeedInfo(HttpServletRequest request, @PathVariable("id") Long user,
-                                                                    @PathVariable("count") Integer count, @RequestParam(required = false) Long start) {
+    public ResponseEntity<UserDto.ResponseFeedInfo> getUserFeedInfo(HttpServletRequest request,
+                                                                    @PathVariable("id") Long user,
+                                                                    @PathVariable("count") Integer count,
+                                                                    @RequestParam(required = false) Long start) {
         return ResponseEntity.status(HttpStatus.OK).body(userFeedInfoService.getUserFeedInfo(user, count, start));
     }
 
     @GetMapping("/api/v1/user/{id}/posts/{count}")
-    public ResponseEntity<PostDto.ResponsePostInfos> getUserPostInfos(HttpServletRequest request, @PathVariable("id") Long user,
-                                                                      @PathVariable("count") Integer count, @RequestParam(required = false) Long start) {
+    public ResponseEntity<PostDto.ResponsePostInfos> getUserPostInfos(HttpServletRequest request,
+                                                                      @PathVariable("id") Long user,
+                                                                      @PathVariable("count") Integer count,
+                                                                      @RequestParam(required = false) Long start) {
         return ResponseEntity.status(HttpStatus.OK).body(postService.getUserPosts(user, count, start));
+    }
+
+    @GetMapping("/api/v1/user/{id}/followers/{count}")
+    public ResponseEntity<List<UserDto.ResponseUserInfo>> getUserFollowerInfos(HttpServletRequest request,
+                                                                               @PathVariable("id") Long user,
+                                                                               @PathVariable("count") Integer count,
+                                                                               @RequestParam(required = false) Long start) {
+        //return ResponseEntity.status(HttpStatus.OK).body(userInfoService.getUserFollowerInfos(user, count, start));
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     @PutMapping("/api/v1/user/my")
