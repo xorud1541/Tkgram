@@ -78,4 +78,21 @@ public class UserInfoService {
         else
             return followerInfoList;
     }
+
+    @Transactional
+    public List<UserDto.ResponseUserInfo> getUserFolloweeInfos(Long myUserIndex, Long otherUserIndex) {
+        List<UserDto.ResponseUserInfo> followeeInfoList = new ArrayList<>();
+        Optional<User> optionalOtherUserInfo = userRepository.findById(otherUserIndex);
+        if(optionalOtherUserInfo.isPresent()) {
+            User otherUser = optionalOtherUserInfo.get();
+            for(Follow follow : otherUser.getFollowees()) {
+                Long followeeIndex = follow.getTo().getUser();
+                followeeInfoList.add(getUserInfo(myUserIndex, followeeIndex));
+            }
+
+            return followeeInfoList;
+        }
+        else
+            return followeeInfoList;
+    }
 }

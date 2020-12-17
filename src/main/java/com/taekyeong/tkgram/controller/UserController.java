@@ -76,6 +76,14 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(userInfoService.getUserFollowerInfos(myUserIndex, user));
     }
 
+    @GetMapping("/api/v1/user/{id}/followees")
+    public ResponseEntity<List<UserDto.ResponseUserInfo>> getUserFolloweeInfos(HttpServletRequest request,
+                                                                               @PathVariable("id") Long user) {
+        String token = request.getHeader("Authorization").substring("Bearer ".length());
+        Long myUserIndex = jwtTokenProvider.getUserIndex(token);
+        return ResponseEntity.status(HttpStatus.OK).body(userInfoService.getUserFolloweeInfos(myUserIndex, user));
+    }
+
     @PutMapping("/api/v1/user/my")
     public HttpStatus putMyInfo(HttpServletRequest request, @RequestBody UserDto.RequestPutUserInfo requestPutUserInfo) {
         String token = request.getHeader("Authorization").substring("Bearer ".length());
